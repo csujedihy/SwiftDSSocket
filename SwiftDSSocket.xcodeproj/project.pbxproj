@@ -33,10 +33,10 @@
 		C13FCFCE1F2FBAD200C96F67 /* ConnectAndListen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ConnectAndListen.swift; path = Tests/ConnectAndListen.swift; sourceTree = "<group>"; };
 		C13FCFD11F2FCBE800C96F67 /* KernelCommunication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = KernelCommunication.swift; path = Tests/KernelCommunication.swift; sourceTree = "<group>"; };
 		C17182B11F2A4C7D00D6DA82 /* SwiftDSSocket.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftDSSocket.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		C17182B41F2A4C7D00D6DA82 /* SwiftDSSocket.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftDSSocket.h; sourceTree = "<group>"; };
-		C17182B51F2A4C7D00D6DA82 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C17182B41F2A4C7D00D6DA82 /* SwiftDSSocket.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SwiftDSSocket.h; path = SupportingFiles/SwiftDSSocket.h; sourceTree = "<group>"; };
+		C17182B51F2A4C7D00D6DA82 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = SupportingFiles/Info.plist; sourceTree = "<group>"; };
 		C17182BA1F2A4C7D00D6DA82 /* SwiftDSSocketTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftDSSocketTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		C17182C11F2A4C7D00D6DA82 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C17182C11F2A4C7D00D6DA82 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = SupportingFiles/Info.plist; sourceTree = "<group>"; };
 		C17182CC1F2A4CE500D6DA82 /* SwiftDSSocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftDSSocket.swift; sourceTree = "<group>"; };
 		C17182CE1F2ADF8800D6DA82 /* TransferUnspecifiedData.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.swift; name = TransferUnspecifiedData.swift; path = Tests/TransferUnspecifiedData.swift; sourceTree = "<group>"; tabWidth = 2; };
 /* End PBXFileReference section */
@@ -60,6 +60,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C13FCFD31F2FE72700C96F67 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				C17182C11F2A4C7D00D6DA82 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		C17182A71F2A4C7D00D6DA82 = {
 			isa = PBXGroup;
 			children = (
@@ -91,7 +99,7 @@
 		C17182BE1F2A4C7D00D6DA82 /* SwiftDSSocketTests */ = {
 			isa = PBXGroup;
 			children = (
-				C17182C11F2A4C7D00D6DA82 /* Info.plist */,
+				C13FCFD31F2FE72700C96F67 /* Supporting Files */,
 				C17182CE1F2ADF8800D6DA82 /* TransferUnspecifiedData.swift */,
 				C13FCFC81F2E468700C96F67 /* TransferSpecifiedData.swift */,
 				C13FCFCA1F2F9F2400C96F67 /* CloseAfterReadWrite.swift */,
@@ -357,7 +365,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = SwiftDSSocket/Info.plist;
+				INFOPLIST_FILE = SwiftDSSocket/SupportingFiles/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.proximac.swiftdssocket.SwiftDSSocket;
@@ -379,7 +387,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = SwiftDSSocket/Info.plist;
+				INFOPLIST_FILE = SwiftDSSocket/SupportingFiles/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.proximac.swiftdssocket.SwiftDSSocket;
@@ -394,7 +402,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = SwiftDSSocketTests/Info.plist;
+				INFOPLIST_FILE = SwiftDSSocketTests/SupportingFiles/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.proximac.swiftdssocket.SwiftDSSocketTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -407,7 +415,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = SwiftDSSocketTests/Info.plist;
+				INFOPLIST_FILE = SwiftDSSocketTests/SupportingFiles/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.proximac.swiftdssocket.SwiftDSSocketTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
