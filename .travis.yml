@@ -1,4 +1,4 @@
-language: swift
+language: objective-c
 os: osx
 osx_image: xcode8.3
 xcode_project: SwiftDSSocket.xcodeproj
