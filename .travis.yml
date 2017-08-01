@@ -1,5 +1,9 @@
 language: objective-c
 os: osx
 osx_image: xcode8.3
-xcode_project: SwiftDSSocket.xcodeproj
-xcode_scheme: SwiftDSSocketTests
+
+install:
+- gem install xcpretty --no-rdoc --no-ri --no-document --quiet
+
+script:
+- xcodebuild clean build  test -project SwiftDSSocket.xcodeproj -scheme SwiftDSSocketTests | xcpretty
