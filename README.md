@@ -1,8 +1,8 @@
 ![macOS](https://img.shields.io/badge/macOS-10.10%2B-green.svg?style=flat)
 ![iOS](https://img.shields.io/badge/iOS-10.0%2B-green.svg?style=flat)
 ![Swift Version](https://img.shields.io/badge/Swift-3.1-orange.svg?style=flat)
-![Version Status](https://img.shields.io/cocoapods/v/SwiftDSSocket.svg?style=flat)
-![Travis-CI](https://api.travis-ci.org/csujedihy/SwiftDSSocket.svg?branch=master)
+[![CocoaPods](https://img.shields.io/cocoapods/v/SwiftDSSocket.svg?style=flat)](http://cocoadocs.org/docsets/SwiftDSSocket)
+[![Travis-CI](https://api.travis-ci.org/csujedihy/SwiftDSSocket.svg?branch=master)](https://travis-ci.org/csujedihy/SwiftDSSocket)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
 # SwiftDSSocket
@@ -66,6 +66,8 @@ To include SwiftDSSocket in a project using Carthage, add a line to your `Cartfi
 	github "csujedihy/SwiftDSSocket"
 ```
 
+### Documentation
+[http://cocoadocs.org/docsets/SwiftDSSocket/](http://cocoadocs.org/docsets/SwiftDSSocket/)
 
 ### Example:
 
