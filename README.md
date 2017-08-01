@@ -3,7 +3,7 @@
 ![Swift Version](https://img.shields.io/badge/Swift-3.1-orange.svg?style=flat)
 ![Version Status](https://img.shields.io/cocoapods/v/SwiftDSSocket.svg?style=flat)
 
-# SwiftDSSocket
+# <span style="color:blue">SwiftDSSocket</span>
 
 ## Overview
 
