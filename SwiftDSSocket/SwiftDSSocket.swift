@@ -13,12 +13,12 @@
 import Foundation
 
 #if os(Linux)
-import Glibc
+  import Glibc
 #else // os(Darwin)
-import Darwin
+  import Darwin
 #endif
 
-@objc protocol SwiftDSSocketDelegate {
+@objc public protocol SwiftDSSocketDelegate {
   @objc optional func socket(sock: SwiftDSSocket, didRead data: Data, tag: Int)
   @objc optional func socket(sock: SwiftDSSocket, didWrite tag: Int)
   @objc optional func socket(sock: SwiftDSSocket, didCloseConnection error: SwiftDSSocket.SocketError?)
@@ -122,7 +122,7 @@ class SwiftDSSocketWritePacket: NSObject {
 }
 
 
-class SwiftDSSocket: NSObject {
+public class SwiftDSSocket: NSObject {
   fileprivate static let NullSocket: Int32 = -1
   fileprivate var socketFD: Int32 = NullSocket
   fileprivate let CTLIOCGINFO: CUnsignedLong = 0xc0644e03
@@ -146,7 +146,7 @@ class SwiftDSSocket: NSObject {
   fileprivate var currentWrite: SwiftDSSocketWritePacket?
   
   public var userData: Any?
-  public static var debugMode = true
+  public static var debugMode = false
   
   
   fileprivate enum SocketStatus: Int, Comparable {
@@ -212,7 +212,7 @@ class SwiftDSSocket: NSObject {
     case kernel
   }
   
-  init(delegate: SwiftDSSocketDelegate?, delegateQueue: DispatchQueue?, type: SocketType) {
+  public init(delegate: SwiftDSSocketDelegate?, delegateQueue: DispatchQueue?, type: SocketType) {
     super.init()
     self.delegate = delegate
     self.delegateQueue = delegateQueue
@@ -338,7 +338,7 @@ class SwiftDSSocket: NSObject {
   }
   
   
-  func accept(onPort port: UInt16) throws {
+  public func accept(onPort port: UInt16) throws {
     try socketQueue.sync {
       guard status == .initial else { throw SocketError(.socketErrorIncorrectSocketStatus) }
       socketFD = socket(AF_INET6, SOCK_STREAM, 0)
@@ -672,7 +672,7 @@ class SwiftDSSocket: NSObject {
     
   }
   
-  func tryConnect(toHost host: String, port: UInt16) throws {
+  public func tryConnect(toHost host: String, port: UInt16) throws {
     
     try socketQueue.sync {
       guard status == .initial else { throw SocketError(.socketErrorIncorrectSocketStatus) }
@@ -740,7 +740,7 @@ class SwiftDSSocket: NSObject {
   }
   
   
-  func tryConnect(tobundleName bundleName: String) throws {
+  public func tryConnect(tobundleName bundleName: String) throws {
     try socketQueue.sync {
       var sockAddrControl = sockaddr_ctl()
       let ctlInfoSize = MemoryLayout<ctl_info>.stride
@@ -767,7 +767,7 @@ class SwiftDSSocket: NSObject {
           return $0.pointee as sockaddr
         }
       })
-
+      
       let retval = Darwin.connect(socketFD, &sockaddrPtr, UInt32(MemoryLayout<sockaddr_ctl>.stride))
       if retval != 0 {
         SwiftDSSocket.log("Cannot connect to kernel extension retval = " + String(retval))
@@ -779,10 +779,10 @@ class SwiftDSSocket: NSObject {
       self.setupWatchersForNewConnectedSocket(peerHost: bundleName, peerPort: 0)
       
     }
-
+    
   }
   
-  func write(data: Data, tag: Int) {
+  public func write(data: Data, tag: Int) {
     socketQueue.async {
       guard self.status < .closing else { return }
       assert(self.writeDispatchSource != nil, "writeDispatchSource is nil")
@@ -794,11 +794,11 @@ class SwiftDSSocket: NSObject {
   }
   
   
-  func readData(tag: Int) {
+  public func readData(tag: Int) {
     readData(toLength: 0, tag: tag)
   }
   
-  func readData(toLength: UInt, tag: Int) {
+  public func readData(toLength: UInt, tag: Int) {
     socketQueue.async {
       guard self.status < .closing else { return }
       assert(self.readDispatchSource != nil, "readDispatchSource is nil")
@@ -808,7 +808,7 @@ class SwiftDSSocket: NSObject {
     }
   }
   
-  func disconnectAfterReading() {
+  public func disconnectAfterReading() {
     socketQueue.async {
       if self.status >= .connected && self.status < .closing {
         self.status = .closing
@@ -817,7 +817,7 @@ class SwiftDSSocket: NSObject {
     }
   }
   
-  func disconnectAfterWriting() {
+  public func disconnectAfterWriting() {
     socketQueue.async {
       if self.status >= .connected && self.status < .closing {
         self.status = .closing
@@ -826,7 +826,7 @@ class SwiftDSSocket: NSObject {
     }
   }
   
-  func disconnectAfterReadingAndWriting() {
+  public func disconnectAfterReadingAndWriting() {
     socketQueue.async {
       if self.status >= .connected && self.status < .closing {
         self.status = .closing
@@ -836,7 +836,7 @@ class SwiftDSSocket: NSObject {
   }
   
   
-  func disconnect() {
+  public func disconnect() {
     socketQueue.async {
       if self.status >= .connected && self.status < .closing || self.status == .listening {
         self.status = .closing
