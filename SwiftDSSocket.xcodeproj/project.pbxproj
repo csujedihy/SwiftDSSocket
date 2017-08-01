@@ -18,6 +18,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		C13FD0151F300E1500C96F67 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C13FD0111F300E1400C96F67 /* EchoServer.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = C13FCFFF1F300E1400C96F67;
+			remoteInfo = EchoServer;
+		};
 		C17182BC1F2A4C7D00D6DA82 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C17182A81F2A4C7D00D6DA82 /* Project object */;
@@ -32,6 +39,7 @@
 		C13FCFCA1F2F9F2400C96F67 /* CloseAfterReadWrite.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CloseAfterReadWrite.swift; path = Tests/CloseAfterReadWrite.swift; sourceTree = "<group>"; };
 		C13FCFCE1F2FBAD200C96F67 /* ConnectAndListen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ConnectAndListen.swift; path = Tests/ConnectAndListen.swift; sourceTree = "<group>"; };
 		C13FCFD11F2FCBE800C96F67 /* KernelCommunication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = KernelCommunication.swift; path = Tests/KernelCommunication.swift; sourceTree = "<group>"; };
+		C13FD0111F300E1400C96F67 /* EchoServer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = EchoServer.xcodeproj; path = EchoServer/EchoServer.xcodeproj; sourceTree = "<group>"; };
 		C17182B11F2A4C7D00D6DA82 /* SwiftDSSocket.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftDSSocket.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C17182B41F2A4C7D00D6DA82 /* SwiftDSSocket.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SwiftDSSocket.h; path = SupportingFiles/SwiftDSSocket.h; sourceTree = "<group>"; };
 		C17182B51F2A4C7D00D6DA82 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = SupportingFiles/Info.plist; sourceTree = "<group>"; };
@@ -68,9 +76,26 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		C13FCFF51F300DBA00C96F67 /* Demo */ = {
+			isa = PBXGroup;
+			children = (
+				C13FD0111F300E1400C96F67 /* EchoServer.xcodeproj */,
+			);
+			name = Demo;
+			sourceTree = "<group>";
+		};
+		C13FD0121F300E1400C96F67 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C13FD0161F300E1500C96F67 /* EchoServer.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		C17182A71F2A4C7D00D6DA82 = {
 			isa = PBXGroup;
 			children = (
+				C13FCFF51F300DBA00C96F67 /* Demo */,
 				C17182B31F2A4C7D00D6DA82 /* Sources */,
 				C17182BE1F2A4C7D00D6DA82 /* SwiftDSSocketTests */,
 				C17182B21F2A4C7D00D6DA82 /* Products */,
@@ -199,6 +224,12 @@
 			mainGroup = C17182A71F2A4C7D00D6DA82;
 			productRefGroup = C17182B21F2A4C7D00D6DA82 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = C13FD0121F300E1400C96F67 /* Products */;
+					ProjectRef = C13FD0111F300E1400C96F67 /* EchoServer.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				C17182B01F2A4C7D00D6DA82 /* SwiftDSSocket */,
@@ -206,6 +237,16 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		C13FD0161F300E1500C96F67 /* EchoServer.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = EchoServer.app;
+			remoteRef = C13FD0151F300E1500C96F67 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		C17182AF1F2A4C7D00D6DA82 /* Resources */ = {
