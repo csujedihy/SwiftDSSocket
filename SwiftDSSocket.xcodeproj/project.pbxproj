@@ -11,6 +11,7 @@
 		C13FCFCB1F2F9F2400C96F67 /* CloseAfterReadWrite.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13FCFCA1F2F9F2400C96F67 /* CloseAfterReadWrite.swift */; };
 		C13FCFCF1F2FBAD200C96F67 /* ConnectAndListen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13FCFCE1F2FBAD200C96F67 /* ConnectAndListen.swift */; };
 		C13FCFD21F2FCBE800C96F67 /* KernelCommunication.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13FCFD11F2FCBE800C96F67 /* KernelCommunication.swift */; };
+		C13FD01F1F30538A00C96F67 /* SwiftDSSocket.podspec in Resources */ = {isa = PBXBuildFile; fileRef = C13FD01E1F30538A00C96F67 /* SwiftDSSocket.podspec */; };
 		C17182BB1F2A4C7D00D6DA82 /* SwiftDSSocket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C17182B11F2A4C7D00D6DA82 /* SwiftDSSocket.framework */; };
 		C17182C21F2A4C7D00D6DA82 /* SwiftDSSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = C17182B41F2A4C7D00D6DA82 /* SwiftDSSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C17182CD1F2A4CE500D6DA82 /* SwiftDSSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17182CC1F2A4CE500D6DA82 /* SwiftDSSocket.swift */; };
@@ -32,6 +33,7 @@
 		C13FCFCA1F2F9F2400C96F67 /* CloseAfterReadWrite.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CloseAfterReadWrite.swift; path = Tests/CloseAfterReadWrite.swift; sourceTree = "<group>"; };
 		C13FCFCE1F2FBAD200C96F67 /* ConnectAndListen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ConnectAndListen.swift; path = Tests/ConnectAndListen.swift; sourceTree = "<group>"; };
 		C13FCFD11F2FCBE800C96F67 /* KernelCommunication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = KernelCommunication.swift; path = Tests/KernelCommunication.swift; sourceTree = "<group>"; };
+		C13FD01E1F30538A00C96F67 /* SwiftDSSocket.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SwiftDSSocket.podspec; sourceTree = "<group>"; };
 		C17182B11F2A4C7D00D6DA82 /* SwiftDSSocket.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftDSSocket.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C17182B41F2A4C7D00D6DA82 /* SwiftDSSocket.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SwiftDSSocket.h; path = SupportingFiles/SwiftDSSocket.h; sourceTree = "<group>"; };
 		C17182B51F2A4C7D00D6DA82 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = SupportingFiles/Info.plist; sourceTree = "<group>"; };
@@ -71,6 +73,7 @@
 		C17182A71F2A4C7D00D6DA82 = {
 			isa = PBXGroup;
 			children = (
+				C13FD01E1F30538A00C96F67 /* SwiftDSSocket.podspec */,
 				C17182B31F2A4C7D00D6DA82 /* Sources */,
 				C17182BE1F2A4C7D00D6DA82 /* SwiftDSSocketTests */,
 				C17182B21F2A4C7D00D6DA82 /* Products */,
@@ -212,6 +215,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C13FD01F1F30538A00C96F67 /* SwiftDSSocket.podspec in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

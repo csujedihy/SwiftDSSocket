@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "SwiftDSSocket"
-  s.version      = "0.0.2"
+  s.version      = "0.0.3"
   s.summary      = "DispatchSource based sockets framework written in pure Swift 3.1"
   s.homepage     = "https://github.com/csujedihy/SwiftDSSocket"
   s.license      = "GPL"
