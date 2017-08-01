@@ -1,6 +1,6 @@
 //
-//  SwiftAsyncSocket.swift
-//  SwiftAsyncSocket
+//  SwiftDSSocket.swift
+//  SwiftDSSocket.swift
 //
 //  Created by Yi Huang on 7/7/17.
 //  Copyright © 2017 Yi Huang. All rights reserved.
@@ -18,11 +18,40 @@ import Foundation
   import Darwin
 #endif
 
+
+/// delegate methods for each operation
 @objc public protocol SwiftDSSocketDelegate {
+  /// delegate method called after reading data from socket
+  ///
+  /// - Parameters:
+  ///   - sock: SwiftDSSocket instance
+  ///   - data: data read from stream
+  ///   - tag: a tag to mark this read operation
   @objc optional func socket(sock: SwiftDSSocket, didRead data: Data, tag: Int)
+  /// delegate method called after reading data from socket
+  ///
+  /// - Parameters:
+  ///   - sock: SwiftDSSocket instance
+  ///   - tag: a tag to mark this write operation
   @objc optional func socket(sock: SwiftDSSocket, didWrite tag: Int)
+  /// delegate method called after closing connection
+  ///
+  /// - Parameters:
+  ///   - sock: SwiftDSSocket instance
+  ///   - error: SocketError indicates the reason why it gets closed
   @objc optional func socket(sock: SwiftDSSocket, didCloseConnection error: SwiftDSSocket.SocketError?)
+  /// delegate method called after the connection to destination is established
+  ///
+  /// - Parameters:
+  ///   - sock: SwiftDSSocket instance
+  ///   - host: host address in `String`
+  ///   - port: port number in UInt16
   @objc optional func socket(sock: SwiftDSSocket, didConnectToHost host: String, port: UInt16)
+  /// delegate method called after an incoming connection is accepted
+  ///
+  /// - Parameters:
+  ///   - sock: SwiftDSSocket instance
+  ///   - newSocket: SwiftDSSocket instance for peer socket
   @objc optional func socket(sock: SwiftDSSocket, didAcceptNewSocket newSocket: SwiftDSSocket)
 }
 
@@ -111,7 +140,6 @@ class SwiftDSSocketWritePacket: NSObject {
   }
   
   func isDone() -> Bool {
-    SwiftDSSocket.log("bufferOffset = \(bufferOffset) bufferCapcity = \(bufferCapacity)")
     return bufferOffset == bufferCapacity
   }
   
@@ -122,6 +150,7 @@ class SwiftDSSocketWritePacket: NSObject {
 }
 
 
+/// SwiftDSSocket class definition
 public class SwiftDSSocket: NSObject {
   fileprivate static let NullSocket: Int32 = -1
   fileprivate var socketFD: Int32 = NullSocket
@@ -145,7 +174,9 @@ public class SwiftDSSocket: NSObject {
   fileprivate var currentRead: SwiftDSSocketReadPacket?
   fileprivate var currentWrite: SwiftDSSocketWritePacket?
   
+  /// store user data that can be used for context
   public var userData: Any?
+  /// debug option (might be deprecated in future)
   public static var debugMode = false
   
   
@@ -182,8 +213,21 @@ public class SwiftDSSocket: NSObject {
     case afterBoth
   }
   
+  /// this defines all kinds of error in SwiftDSSocket
   public class SocketError: NSObject, Error {
-    enum ErrorKind {
+    /// Kinds of Error in SocketError
+    ///
+    /// - socketErrorFCNTL: failure in BSD fcntl function
+    /// - socketErrorDefault: default error
+    /// - socketErrorIOCTL: failure in BSD ioctl function
+    /// - socketErrorWrongAddress: the given address is not correct
+    /// - socketErrorAlreadyConnected: the current socket is already connected
+    /// - socketErrorIncorrectSocketStatus: conflicts with current socket status
+    /// - socketErrorConnecting: failure in connecting to destination
+    /// - socketErrorReadSpecific: found error when reading data from sock (return from `read`)
+    /// - socketErrorWriteSpecific: found error when writing data to sock (return from `write`)
+    /// - socketErrorSetSockOpt: failure in BSD setsockopt function
+    public enum ErrorKind {
       case socketErrorFCNTL
       case socketErrorDefault
       case socketErrorIOCTL
@@ -196,9 +240,12 @@ public class SwiftDSSocket: NSObject {
       case socketErrorSetSockOpt
     }
     
-    var errorKind: ErrorKind?
-    var socketErrorCode: Int?
-    var localizedDescription: String?
+    /// specifies error kind
+    public var errorKind: ErrorKind?
+    /// specifies error code (only for BSD socket standard error code)
+    public var socketErrorCode: Int?
+    /// a description string for this error
+    public var localizedDescription: String?
     
     init(_ errorKind: ErrorKind, socketErrorCode: Int? = nil, errorDescription: String? = nil) {
       self.errorKind = errorKind
@@ -207,11 +254,21 @@ public class SwiftDSSocket: NSObject {
     }
   }
   
+  /// Socket Type
+  ///
+  /// - tcp: for TCP stream
+  /// - kernel: for kernel TCP stream
   public enum SocketType {
     case tcp
     case kernel
   }
   
+  /// create a new SwiftDSSocket instance by specifying delegate, delegate queue and socket type
+  ///
+  /// - Parameters:
+  ///   - delegate: specify delegate target (normally self)
+  ///   - delegateQueue: specify the GCD dispatch queue for delegate methods
+  ///   - type: socket type: tcp or kernel
   public init(delegate: SwiftDSSocketDelegate?, delegateQueue: DispatchQueue?, type: SocketType) {
     super.init()
     self.delegate = delegate
@@ -338,6 +395,10 @@ public class SwiftDSSocket: NSObject {
   }
   
   
+  /// listen on a specified port for both IPv4/IPv6
+  ///
+  /// - Parameter port: port number in UInt16
+  /// - Throws: throws a SocketError
   public func accept(onPort port: UInt16) throws {
     try socketQueue.sync {
       guard status == .initial else { throw SocketError(.socketErrorIncorrectSocketStatus) }
@@ -672,6 +733,13 @@ public class SwiftDSSocket: NSObject {
     
   }
   
+  
+  /// connect to a host using address:port
+  ///
+  /// - Parameters:
+  ///   - host: host address could be IP(v4/v6) or domain name in `String`
+  ///   - port: port number in UInt16
+  /// - Throws: throws a SocketError
   public func tryConnect(toHost host: String, port: UInt16) throws {
     
     try socketQueue.sync {
@@ -740,6 +808,10 @@ public class SwiftDSSocket: NSObject {
   }
   
   
+  /// connect to kernel extenstion by using bundleId (String)
+  ///
+  /// - Parameter bundleName: bundleName in `String`
+  /// - Throws: throws a SocketError
   public func tryConnect(tobundleName bundleName: String) throws {
     try socketQueue.sync {
       var sockAddrControl = sockaddr_ctl()
@@ -782,6 +854,11 @@ public class SwiftDSSocket: NSObject {
     
   }
   
+  /// write data to socket
+  ///
+  /// - Parameters:
+  ///   - data: data ready to send to socket in `Data` type
+  ///   - tag: a tag to mark this write operation
   public func write(data: Data, tag: Int) {
     socketQueue.async {
       guard self.status < .closing else { return }
@@ -794,10 +871,18 @@ public class SwiftDSSocket: NSObject {
   }
   
   
+  /// read data from socket without given data length
+  ///
+  /// - Parameter tag: a tag to mark this read operation
   public func readData(tag: Int) {
     readData(toLength: 0, tag: tag)
   }
   
+  /// read specified length of data from socket
+  /// the callback will be invoked right after read specified amount of data
+  /// - Parameters:
+  ///   - toLength: length of data to read
+  ///   - tag: a tag to mark this read operation
   public func readData(toLength: UInt, tag: Int) {
     socketQueue.async {
       guard self.status < .closing else { return }
@@ -808,6 +893,7 @@ public class SwiftDSSocket: NSObject {
     }
   }
   
+  /// disconnect socket after all read opreations queued up and prevents new read operations
   public func disconnectAfterReading() {
     socketQueue.async {
       if self.status >= .connected && self.status < .closing {
@@ -817,6 +903,7 @@ public class SwiftDSSocket: NSObject {
     }
   }
   
+  /// disconnect socket after all write opreations queued up and prevents new write operations
   public func disconnectAfterWriting() {
     socketQueue.async {
       if self.status >= .connected && self.status < .closing {
@@ -826,6 +913,7 @@ public class SwiftDSSocket: NSObject {
     }
   }
   
+  /// disconnect socket after all opreations queued up and prevents new operations
   public func disconnectAfterReadingAndWriting() {
     socketQueue.async {
       if self.status >= .connected && self.status < .closing {
@@ -835,7 +923,7 @@ public class SwiftDSSocket: NSObject {
     }
   }
   
-  
+  /// simply disconnect socket and discards all opreations queued up
   public func disconnect() {
     socketQueue.async {
       if self.status >= .connected && self.status < .closing || self.status == .listening {

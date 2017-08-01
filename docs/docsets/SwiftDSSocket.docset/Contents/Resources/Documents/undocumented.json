@@ -1,0 +1,19 @@
+{
+  "warnings": [
+    {
+      "file": "/Users/jedihy/Documents/Project/SwiftDSSocket/SwiftDSSocket/SwiftDSSocket.swift",
+      "line": 247,
+      "symbol": "SwiftDSSocket.SocketType.tcp",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jedihy/Documents/Project/SwiftDSSocket/SwiftDSSocket/SwiftDSSocket.swift",
+      "line": 248,
+      "symbol": "SwiftDSSocket.SocketType.kernel",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    }
+  ],
+  "source_directory": "/Users/jedihy/Documents/Project/SwiftDSSocket"
+}

@@ -1,6 +1,6 @@
 //
 //  ViewController.swift
-//  KernelSocket
+//  EchoServer
 //
 //  Created by Yi Huang on 7/7/17.
 //  Copyright © 2017 Yi Huang. All rights reserved.

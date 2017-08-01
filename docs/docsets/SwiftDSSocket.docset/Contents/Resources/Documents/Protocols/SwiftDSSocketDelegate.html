@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>SwiftDSSocketDelegate Protocol Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Protocol/SwiftDSSocketDelegate" class="dashAnchor"></a>
+    <a title="SwiftDSSocketDelegate Protocol Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../index.html">SwiftDSSocket Docs</a> (68% documented)</p>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../index.html">SwiftDSSocket Reference</a>
+        <img id="carat" src="../img/carat.png" />
+        SwiftDSSocketDelegate Protocol Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Classes/SwiftDSSocket.html">SwiftDSSocket</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SwiftDSSocket/SocketError.html">– SocketError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SwiftDSSocket/SocketType.html">– SocketType</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Protocols/SwiftDSSocketDelegate.html">SwiftDSSocketDelegate</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>SwiftDSSocketDelegate</h1>
+              <div class="declaration">
+                <div class="language">
+                  <pre class="highlight"><code><span class="kd">@objc</span> <span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">SwiftDSSocketDelegate</span></code></pre>
+
+                </div>
+              </div>
+            <p>delegate methods for each operation</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FP13SwiftDSSocket21SwiftDSSocketDelegate6socketFT4sockCS_13SwiftDSSocket7didReadV10Foundation4Data3tagSi_T_"></a>
+                    <a name="//apple_ref/swift/Method/socket(sock:didRead:tag:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FP13SwiftDSSocket21SwiftDSSocketDelegate6socketFT4sockCS_13SwiftDSSocket7didReadV10Foundation4Data3tagSi_T_">socket(sock:didRead:tag:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>delegate method called after reading data from socket</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">@objc</span> <span class="kd">optional</span> <span class="kd">func</span> <span class="nf">socket</span><span class="p">(</span><span class="nv">sock</span><span class="p">:</span> <span class="kt"><a href="../Classes/SwiftDSSocket.html">SwiftDSSocket</a></span><span class="p">,</span> <span class="n">didRead</span> <span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">,</span> <span class="nv">tag</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>sock</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>SwiftDSSocket instance</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>data</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>data read from stream</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>tag</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a tag to mark this read operation</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FP13SwiftDSSocket21SwiftDSSocketDelegate6socketFT4sockCS_13SwiftDSSocket8didWriteSi_T_"></a>
+                    <a name="//apple_ref/swift/Method/socket(sock:didWrite:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FP13SwiftDSSocket21SwiftDSSocketDelegate6socketFT4sockCS_13SwiftDSSocket8didWriteSi_T_">socket(sock:didWrite:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>delegate method called after reading data from socket</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">@objc</span> <span class="kd">optional</span> <span class="kd">func</span> <span class="nf">socket</span><span class="p">(</span><span class="nv">sock</span><span class="p">:</span> <span class="kt"><a href="../Classes/SwiftDSSocket.html">SwiftDSSocket</a></span><span class="p">,</span> <span class="n">didWrite</span> <span class="nv">tag</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>sock</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>SwiftDSSocket instance</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>tag</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a tag to mark this write operation</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FP13SwiftDSSocket21SwiftDSSocketDelegate6socketFT4sockCS_13SwiftDSSocket18didCloseConnectionGSqCS1_11SocketError__T_"></a>
+                    <a name="//apple_ref/swift/Method/socket(sock:didCloseConnection:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FP13SwiftDSSocket21SwiftDSSocketDelegate6socketFT4sockCS_13SwiftDSSocket18didCloseConnectionGSqCS1_11SocketError__T_">socket(sock:didCloseConnection:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>delegate method called after closing connection</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">@objc</span> <span class="kd">optional</span> <span class="kd">func</span> <span class="nf">socket</span><span class="p">(</span><span class="nv">sock</span><span class="p">:</span> <span class="kt"><a href="../Classes/SwiftDSSocket.html">SwiftDSSocket</a></span><span class="p">,</span> <span class="n">didCloseConnection</span> <span class="nv">error</span><span class="p">:</span> <span class="kt"><a href="../Classes/SwiftDSSocket.html">SwiftDSSocket</a></span><span class="o">.</span><span class="kt">SocketError</span><span class="p">?)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>sock</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>SwiftDSSocket instance</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>error</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>SocketError indicates the reason why it gets closed</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FP13SwiftDSSocket21SwiftDSSocketDelegate6socketFT4sockCS_13SwiftDSSocket16didConnectToHostSS4portVs6UInt16_T_"></a>
+                    <a name="//apple_ref/swift/Method/socket(sock:didConnectToHost:port:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FP13SwiftDSSocket21SwiftDSSocketDelegate6socketFT4sockCS_13SwiftDSSocket16didConnectToHostSS4portVs6UInt16_T_">socket(sock:didConnectToHost:port:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>delegate method called after the connection to destination is established</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">@objc</span> <span class="kd">optional</span> <span class="kd">func</span> <span class="nf">socket</span><span class="p">(</span><span class="nv">sock</span><span class="p">:</span> <span class="kt"><a href="../Classes/SwiftDSSocket.html">SwiftDSSocket</a></span><span class="p">,</span> <span class="n">didConnectToHost</span> <span class="nv">host</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">port</span><span class="p">:</span> <span class="kt">UInt16</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>sock</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>SwiftDSSocket instance</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>host</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>host address in <code>String</code></p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>port</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>port number in UInt16</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FP13SwiftDSSocket21SwiftDSSocketDelegate6socketFT4sockCS_13SwiftDSSocket18didAcceptNewSocketS1__T_"></a>
+                    <a name="//apple_ref/swift/Method/socket(sock:didAcceptNewSocket:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FP13SwiftDSSocket21SwiftDSSocketDelegate6socketFT4sockCS_13SwiftDSSocket18didAcceptNewSocketS1__T_">socket(sock:didAcceptNewSocket:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>delegate method called after an incoming connection is accepted</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">@objc</span> <span class="kd">optional</span> <span class="kd">func</span> <span class="nf">socket</span><span class="p">(</span><span class="nv">sock</span><span class="p">:</span> <span class="kt"><a href="../Classes/SwiftDSSocket.html">SwiftDSSocket</a></span><span class="p">,</span> <span class="n">didAcceptNewSocket</span> <span class="nv">newSocket</span><span class="p">:</span> <span class="kt"><a href="../Classes/SwiftDSSocket.html">SwiftDSSocket</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>sock</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>SwiftDSSocket instance</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>newSocket</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>SwiftDSSocket instance for peer socket</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2017 <a class="link" href="https://github.com/csujedihy/SwiftDSSocket" target="_blank" rel="external">jedihy</a>. All rights reserved. (Last updated: 2017-07-31)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.3</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</div>
+</html>
