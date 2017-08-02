@@ -43,7 +43,7 @@ To include SwiftDSSocket into a Swift Package Manager package, add it to the `de
 
 ```
     dependencies: [
-        .Package(url: "https://github.com/csujedihy/SwiftDSSocket")
+        .Package(url: "https://github.com/csujedihy/SwiftDSSocket", "x.x.x")
     ]
 ```
 
