@@ -37,22 +37,20 @@ SwiftDSSocket is a purely swift based **asynchronous** socket framework built on
 
 ### Including in your project
 
-<!--#### Swift Package Manager
+#### Swift Package Manager
 
-To include SwiftDSSocket into a Swift Package Manager package, add it to the `dependencies` attribute defined in your `Package.swift` file. You can select the version using the `majorVersion` and `minor` parameters. For example:
+To include SwiftDSSocket into a Swift Package Manager package, add it to the `dependencies` attribute defined in your `Package.swift` file. For example:
 
 ```
-	dependencies: [
-		.Package(url: "https://github.com/csujedihy/SwiftDSSocket", majorVersion: <majorVersion>, minor: <minor>)
-	]
-```-->
+    dependencies: [
+        .Package(url: "https://github.com/csujedihy/SwiftDSSocket")
+    ]
+```
 
 #### CocoaPods
 To include SwiftDSSocket in a project using CocoaPods, you just add `SwiftDSSocket` to your `Podfile`, for example:
 
 ```
-    platform :ios, '10.0'
-
     target 'MyApp' do
         use_frameworks!
         pod 'SwiftDSSocket'
@@ -63,8 +61,10 @@ To include SwiftDSSocket in a project using CocoaPods, you just add `SwiftDSSock
 To include SwiftDSSocket in a project using Carthage, add a line to your `Cartfile` with the GitHub organization and project names and version. For example:
 
 ```
-	github "csujedihy/SwiftDSSocket"
+    github "csujedihy/SwiftDSSocket"
 ```
+
+#### 
 
 ### Documentation
 [http://cocoadocs.org/docsets/SwiftDSSocket/](http://cocoadocs.org/docsets/SwiftDSSocket/)

@@ -1,6 +1,0 @@
-framework module SwiftDSSocket {
-  umbrella header "SwiftDSSocket-umbrella.h"
-
-  export *
-  module * { export * }
-}
