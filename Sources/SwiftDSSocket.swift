@@ -275,10 +275,12 @@ public class SwiftDSSocket: NSObject {
     self.delegateQueue = delegateQueue
     self.socketType = type
     
+    #if os(macOS)
     if type == .kernel {
-      socketFD = socket(PF_SYSTEM, SOCK_STREAM, SYSPROTO_CONTROL)
+      socketFD = Darwin.socket(PF_SYSTEM, SOCK_STREAM, SYSPROTO_CONTROL)
       setNonBlocking()
     }
+    #endif
     
   }
   
@@ -807,11 +809,12 @@ public class SwiftDSSocket: NSObject {
     }
   }
   
-  
+
   /// connect to kernel extenstion by using bundleId (String)
   ///
   /// - Parameter bundleName: bundleName in `String`
   /// - Throws: throws a SocketError
+  #if os(macOS)
   public func tryConnect(tobundleName bundleName: String) throws {
     try socketQueue.sync {
       var sockAddrControl = sockaddr_ctl()
@@ -853,6 +856,7 @@ public class SwiftDSSocket: NSObject {
     }
     
   }
+  #endif
   
   /// write data to socket
   ///

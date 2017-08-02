@@ -7,4 +7,4 @@ install:
 - gem install xcpretty-travis-formatter --no-rdoc --no-ri --no-document --quiet
 
 script:
-- xcodebuild clean build test -project SwiftDSSocket.xcodeproj -scheme SwiftDSSocketTests | xcpretty -f `xcpretty-travis-formatter`
+- swift test
