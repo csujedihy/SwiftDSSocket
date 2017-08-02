@@ -1,5 +1,5 @@
 ![macOS](https://img.shields.io/badge/macOS-10.10%2B-green.svg?style=flat)
-![iOS](https://img.shields.io/badge/iOS-10.0%2B-green.svg?style=flat)
+![iOS](https://img.shields.io/badge/iOS-9.0%2B-green.svg?style=flat)
 ![Swift Version](https://img.shields.io/badge/Swift-3.1-orange.svg?style=flat)
 [![CocoaPods](https://img.shields.io/cocoapods/v/SwiftDSSocket.svg?style=flat)](http://cocoadocs.org/docsets/SwiftDSSocket)
 [![Travis-CI](https://api.travis-ci.org/csujedihy/SwiftDSSocket.svg?branch=master)](https://travis-ci.org/csujedihy/SwiftDSSocket)
@@ -9,7 +9,7 @@
 
 ## Overview
 
-SwiftDSSocket is a purely swift based **asynchronous** socket framework built on DispatchSource. Function signatures are pretty much similar to those in CocoaAsyncSocket because I implemented this framework by learning the source code of CocoaAsyncSocket. The initial idea to build this farmework is that I need a network library to communicate with KEXT (NKE) to re-write my [Proximac](https://github.com/csujedihy/proximac) project but none of frameworks I found in github supports that. Thus, I decided to implemented my own framework to do so.
+SwiftDSSocket is a purely swift based **asynchronous** socket framework built atop DispatchSource. Function signatures are pretty much similar to those in CocoaAsyncSocket because I implemented this framework by learning the source code of CocoaAsyncSocket. The initial idea to build this farmework is driven by the need of network library to communicate with KEXT (NKE) to re-write my [Proximac](https://github.com/csujedihy/proximac) project but none of frameworks I found in github supports that. Thus, I decided to implemented my own framework to do so.
 
 **Note:** This framework is still under active development. It only passes my unit tests and might have various bugs.
 
@@ -80,7 +80,6 @@ import Cocoa
 import SwiftDSSocket
 
 class ViewController: NSViewController {
-  var client: SwiftDSSocket?
   var server: SwiftDSSocket?
   let ServerTag = 0
   
@@ -105,4 +104,4 @@ extension ViewController: SwiftDSSocketDelegate {
 
 ```
 
-
+**Tips:** Check out `Demo` folder to see more examples for different environments.
