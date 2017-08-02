@@ -75,7 +75,7 @@
 			children = (
 				C13FD01E1F30538A00C96F67 /* SwiftDSSocket.podspec */,
 				C17182B31F2A4C7D00D6DA82 /* Sources */,
-				C17182BE1F2A4C7D00D6DA82 /* SwiftDSSocketTests */,
+				C17182BE1F2A4C7D00D6DA82 /* Tests */,
 				C17182B21F2A4C7D00D6DA82 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -95,11 +95,10 @@
 				C17182CC1F2A4CE500D6DA82 /* SwiftDSSocket.swift */,
 				C17182CB1F2A4C8F00D6DA82 /* Supporting Files */,
 			);
-			name = Sources;
-			path = SwiftDSSocket;
+			path = Sources;
 			sourceTree = "<group>";
 		};
-		C17182BE1F2A4C7D00D6DA82 /* SwiftDSSocketTests */ = {
+		C17182BE1F2A4C7D00D6DA82 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
 				C13FCFD31F2FE72700C96F67 /* Supporting Files */,
@@ -109,7 +108,7 @@
 				C13FCFCE1F2FBAD200C96F67 /* ConnectAndListen.swift */,
 				C13FCFD11F2FCBE800C96F67 /* KernelCommunication.swift */,
 			);
-			path = SwiftDSSocketTests;
+			path = Tests;
 			sourceTree = "<group>";
 		};
 		C17182CB1F2A4C8F00D6DA82 /* Supporting Files */ = {
@@ -369,7 +368,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = SwiftDSSocket/SupportingFiles/Info.plist;
+				INFOPLIST_FILE = Sources/SupportingFiles/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.proximac.swiftdssocket.SwiftDSSocket;
@@ -391,7 +390,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = SwiftDSSocket/SupportingFiles/Info.plist;
+				INFOPLIST_FILE = Sources/SupportingFiles/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.proximac.swiftdssocket.SwiftDSSocket;
@@ -406,7 +405,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = SwiftDSSocketTests/SupportingFiles/Info.plist;
+				INFOPLIST_FILE = Tests/SupportingFiles/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.proximac.swiftdssocket.SwiftDSSocketTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -419,7 +418,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = SwiftDSSocketTests/SupportingFiles/Info.plist;
+				INFOPLIST_FILE = Tests/SupportingFiles/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.proximac.swiftdssocket.SwiftDSSocketTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
