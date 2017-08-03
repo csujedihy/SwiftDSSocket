@@ -91,6 +91,7 @@ extension CloseAfterReadWrite: SwiftDSSocketDelegate {
   func socket(sock: SwiftDSSocket, didCloseConnection error: SwiftDSSocket.SocketError?) {
     if finishWrite == nil {
       closeAfterAll?.fulfill()
+      closeAfterAll = nil
     }
   }
 }
