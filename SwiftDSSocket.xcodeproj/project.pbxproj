@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		C19DA7111F32F8FF009A9581 /* PartialReadAndWrite.swift in Sources */ = {isa = PBXBuildFile; fileRef = C19DA7101F32F8FF009A9581 /* PartialReadAndWrite.swift */; };
-		C19DA7141F331C31009A9581 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = C19DA7131F331C31009A9581 /* README.md */; };
 		OBJ_27 /* SwiftDSSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_8 /* SwiftDSSocket.swift */; };
 		OBJ_34 /* CloseAfterReadWrite.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_11 /* CloseAfterReadWrite.swift */; };
 		OBJ_35 /* ConnectAndListen.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_12 /* ConnectAndListen.swift */; };
@@ -180,7 +179,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 0;
 			files = (
-				C19DA7141F331C31009A9581 /* README.md in Sources */,
 				OBJ_27 /* SwiftDSSocket.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -3,6 +3,8 @@ import SwiftDSSocket
 
 class EchoServer: SwiftDSSocketDelegate {
   var server: SwiftDSSocket?
+  var newClient: SwiftDSSocket?
+
   let ServerTag = 0
 
   func run() {
@@ -12,6 +14,7 @@ class EchoServer: SwiftDSSocketDelegate {
   }
 
   func socket(sock: SwiftDSSocket, didAcceptNewSocket newSocket: SwiftDSSocket) {
+    newClient = newSocket
     newSocket.readData(tag: ServerTag)
   }
   

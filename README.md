@@ -1,8 +1,8 @@
+[![Travis-CI](https://api.travis-ci.org/csujedihy/SwiftDSSocket.svg?branch=master)](https://travis-ci.org/csujedihy/SwiftDSSocket)
 ![macOS](https://img.shields.io/badge/macOS-10.10%2B-green.svg?style=flat)
 ![iOS](https://img.shields.io/badge/iOS-9.0%2B-green.svg?style=flat)
 ![Swift Version](https://img.shields.io/badge/Swift-3.1-orange.svg?style=flat)
 [![CocoaPods](https://img.shields.io/cocoapods/v/SwiftDSSocket.svg?style=flat)](http://cocoadocs.org/docsets/SwiftDSSocket)
-[![Travis-CI](https://api.travis-ci.org/csujedihy/SwiftDSSocket.svg?branch=master)](https://travis-ci.org/csujedihy/SwiftDSSocket)
 [![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 ![SwiftPM Compatible](https://img.shields.io/badge/SwiftPM-Compatible-brightgreen.svg)
 
@@ -70,7 +70,7 @@ To include SwiftDSSocket in a project using Carthage, add a line to your `Cartfi
 
 ### Example:
 
-The following example creates a default `SwiftDSSocket ` instance and then *immediately* starts listening on port `9999` and echoes back everything sent to this server.
+The following example creates a default `SwiftDSSocket` instance and then *immediately* starts listening on port `9999` and echoes back everything sent to this server.
 
 You can simply use `telnet 127.0.0.1 9999` to connect to this server and send whatever you want.
 
@@ -80,6 +80,7 @@ import SwiftDSSocket
 
 class ViewController: NSViewController {
   var server: SwiftDSSocket?
+  var newClient: SwiftDSSocket?
   let ServerTag = 0
   
   override func viewDidLoad() {
@@ -92,6 +93,7 @@ class ViewController: NSViewController {
 
 extension ViewController: SwiftDSSocketDelegate {
   func socket(sock: SwiftDSSocket, didAcceptNewSocket newSocket: SwiftDSSocket) {
+    newClient = newSocket
     newSocket.readData(tag: ServerTag)
   }
   

@@ -10,7 +10,7 @@ import Cocoa
 import SwiftDSSocket
 
 class ViewController: NSViewController {
-  var client: SwiftDSSocket?
+  var newClient: SwiftDSSocket?
   var server: SwiftDSSocket?
   
   let ServerTag = 0
@@ -28,6 +28,7 @@ class ViewController: NSViewController {
 
 extension ViewController: SwiftDSSocketDelegate {
   func socket(sock: SwiftDSSocket, didAcceptNewSocket newSocket: SwiftDSSocket) {
+    newClient = newSocket
     newSocket.readData(tag: ServerTag)
   }
   
