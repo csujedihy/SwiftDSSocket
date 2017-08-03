@@ -389,24 +389,26 @@ public class SwiftDSSocket: NSObject {
       return
     }
     
-    writeDispatchSource.setEventHandler {
-      if self.status == .connecting {
-        self.status = .connected
-        self.delegateQueue?.async {
-          self.delegate?.socket?(sock: self, didConnectToHost: peerHost, port: peerPort)
+    writeDispatchSource.setEventHandler { [weak self] in
+      guard let strongSelf = self else { return }
+      if strongSelf.status == .connecting {
+        strongSelf.status = .connected
+        strongSelf.delegateQueue?.async {
+          strongSelf.delegate?.socket?(sock: strongSelf, didConnectToHost: peerHost, port: peerPort)
         }
       }
       
-      self.doWriteData()
+      strongSelf.doWriteData()
     }
     
     
-    readDispatchSource.setEventHandler {
+    readDispatchSource.setEventHandler { [weak self] in
+      guard let strongSelf = self else { return }
       let nAvailable: Int = Int(readDispatchSource.data)
       if nAvailable > 0 {
-        self.doReadData(nAvailable: nAvailable)
+        strongSelf.doReadData(nAvailable: nAvailable)
       } else {
-        self.doReadEOF()
+        strongSelf.doReadEOF()
       }
     }
     
@@ -459,12 +461,13 @@ public class SwiftDSSocket: NSObject {
       status = .listening
       
       acceptDispatchSource = DispatchSource.makeReadSource(fileDescriptor: socketFD, queue: socketQueue)
-      acceptDispatchSource?.setEventHandler(handler: {
-        let numOfConnectionsPending = self.acceptDispatchSource?.data ?? 0
+      acceptDispatchSource?.setEventHandler { [weak self] in
+        guard let strongSelf = self else { return }
+        let numOfConnectionsPending = strongSelf.acceptDispatchSource?.data ?? 0
         for _ in 1...numOfConnectionsPending {
-          self.doAccept(self.socketFD)
+          strongSelf.doAccept(strongSelf.socketFD)
         }
-      })
+      }
       
       resumeAcceptDispatchSource()
     }
@@ -691,24 +694,26 @@ public class SwiftDSSocket: NSObject {
     
     var socketFDRefCount = 2
     
-    let closeReadWriteHandler = DispatchWorkItem(block: {
+    let closeReadWriteHandler = DispatchWorkItem { [weak self] in
+      guard let strongSelf = self else { return }
       socketFDRefCount -= 1
-      if socketFDRefCount == 0 && self.socketFD != -1 {
-        close(self.socketFD)
-        self.socketFD = -1
-        self.status = .closed
+      if socketFDRefCount == 0 && strongSelf.socketFD != -1 {
+        close(strongSelf.socketFD)
+        strongSelf.socketFD = -1
+        strongSelf.status = .closed
       }
-    })
+    }
     
     readDispatchSource?.setCancelHandler(handler: closeReadWriteHandler)
     writeDispatchSource?.setCancelHandler(handler: closeReadWriteHandler)
-    acceptDispatchSource?.setCancelHandler(handler: {
-      if self.socketFD != -1 {
-        close(self.socketFD)
-        self.status = .closed
-        self.socketFD = -1
+    acceptDispatchSource?.setCancelHandler { [weak self] in
+      guard let strongSelf = self else { return }
+      if strongSelf.socketFD != -1 {
+        close(strongSelf.socketFD)
+        strongSelf.status = .closed
+        strongSelf.socketFD = -1
       }
-    })
+    }
     
     let sourcesToCancel: [Any?] = [readDispatchSource, writeDispatchSource, acceptDispatchSource].filter { $0 != nil }
     for source in sourcesToCancel {
@@ -815,13 +820,14 @@ public class SwiftDSSocket: NSObject {
             let fd = socket(sockAddr.ai_family, sockAddr.ai_socktype, sockAddr.ai_protocol)
             let retval = connect(fd, sockAddr.ai_addr, sockAddr.ai_addrlen)
             if retval != -1 {
-              self.socketQueue.async {
-                self.socketFD = fd
-                self.status = .connected
-                self.setNonBlocking()
-                self.setupWatchersForNewConnectedSocket(peerHost: host, peerPort: port)
-                self.delegateQueue?.async {
-                  self.delegate?.socket?(sock: self, didConnectToHost: host, port: port)
+              self.socketQueue.async { [weak self] in
+                guard let strongSelf = self else { return }
+                strongSelf.socketFD = fd
+                strongSelf.status = .connected
+                strongSelf.setNonBlocking()
+                strongSelf.setupWatchersForNewConnectedSocket(peerHost: host, peerPort: port)
+                strongSelf.delegateQueue?.async {
+                  strongSelf.delegate?.socket?(sock: strongSelf, didConnectToHost: host, port: port)
                 }
               }
               break
@@ -894,12 +900,13 @@ public class SwiftDSSocket: NSObject {
   ///   - data: data ready to send to socket in `Data` type
   ///   - tag: a tag to mark this write operation
   public func write(data: Data, tag: Int) {
-    socketQueue.async {
-      guard self.status < .closing else { return }
-      assert(self.writeDispatchSource != nil, "writeDispatchSource is nil")
+    socketQueue.async { [weak self] in
+      guard let strongSelf = self else { return }
+      guard strongSelf.status < .closing else { return }
+      assert(strongSelf.writeDispatchSource != nil, "writeDispatchSource is nil")
       let packet = SwiftDSSocketWritePacket(data: data, tag: tag)
-      self.writeQueue.enqueue(packet)
-      self.resumeWriteDispatchSource()
+      strongSelf.writeQueue.enqueue(packet)
+      strongSelf.resumeWriteDispatchSource()
     }
     
   }
@@ -918,51 +925,48 @@ public class SwiftDSSocket: NSObject {
   ///   - toLength: length of data to read
   ///   - tag: a tag to mark this read operation
   public func readData(toLength: UInt, tag: Int) {
-    socketQueue.async {
-      guard self.status < .closing else { return }
-      assert(self.readDispatchSource != nil, "readDispatchSource is nil")
+    socketQueue.async { [weak self] in
+      guard let strongSelf = self else { return }
+      guard strongSelf.status < .closing else { return }
+      assert(strongSelf.readDispatchSource != nil, "readDispatchSource is nil")
       let packet = SwiftDSSocketReadPacket(capacity: Int(toLength), tag: tag)
-      self.readQueue.enqueue(packet)
-      self.resumeReadDispatchSource()
+      strongSelf.readQueue.enqueue(packet)
+      strongSelf.resumeReadDispatchSource()
     }
   }
   
   /// disconnect socket after all read opreations queued up and prevents new read operations
   public func disconnectAfterReading() {
-    socketQueue.async {
-      if self.status >= .connected && self.status < .closing {
-        self.status = .closing
-        self.closeCondition = .afterReads
-      }
-    }
+    disconnect(afterCondition: .afterReads)
   }
   
   /// disconnect socket after all write opreations queued up and prevents new write operations
   public func disconnectAfterWriting() {
-    socketQueue.async {
-      if self.status >= .connected && self.status < .closing {
-        self.status = .closing
-        self.closeCondition = .afterWrites
-      }
-    }
+    disconnect(afterCondition: .afterWrites)
   }
   
   /// disconnect socket after all opreations queued up and prevents new operations
   public func disconnectAfterReadingAndWriting() {
-    socketQueue.async {
-      if self.status >= .connected && self.status < .closing {
-        self.status = .closing
-        self.closeCondition = .afterBoth
+    disconnect(afterCondition: .afterBoth)
+  }
+  
+  fileprivate func disconnect(afterCondition: CloseCondition) {
+    socketQueue.async { [weak self] in
+      guard let strongSelf = self else { return }
+      if strongSelf.status >= .connected && strongSelf.status < .closing {
+        strongSelf.status = .closing
+        strongSelf.closeCondition = afterCondition
       }
     }
   }
   
   /// simply disconnect socket and discards all opreations queued up
   public func disconnect() {
-    socketQueue.async {
-      if self.status >= .connected && self.status < .closing || self.status == .listening {
-        self.status = .closing
-        self.closeWithError(error: nil)
+    socketQueue.async { [weak self] in
+      guard let strongSelf = self else { return }
+      if strongSelf.status >= .connected && strongSelf.status < .closing || strongSelf.status == .listening {
+        strongSelf.status = .closing
+        strongSelf.closeWithError(error: nil)
       }
     }
   }

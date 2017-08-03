@@ -12,6 +12,7 @@ import XCTest
 class TransferUnspecifiedData: XCTestCase {
   var client: SwiftDSSocket?
   var server: SwiftDSSocket?
+  var accepted: SwiftDSSocket?
   weak var finishWrite: XCTestExpectation?
   weak var finishRead: XCTestExpectation?
   let serverAdress = "127.0.0.1"
@@ -61,6 +62,7 @@ class TransferUnspecifiedData: XCTestCase {
 
 extension TransferUnspecifiedData: SwiftDSSocketDelegate {
   func socket(sock: SwiftDSSocket, didAcceptNewSocket newSocket: SwiftDSSocket) {
+    accepted = newSocket
     newSocket.readData(tag: ServerTag)
   }
   

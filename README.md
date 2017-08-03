@@ -3,7 +3,8 @@
 ![Swift Version](https://img.shields.io/badge/Swift-3.1-orange.svg?style=flat)
 [![CocoaPods](https://img.shields.io/cocoapods/v/SwiftDSSocket.svg?style=flat)](http://cocoadocs.org/docsets/SwiftDSSocket)
 [![Travis-CI](https://api.travis-ci.org/csujedihy/SwiftDSSocket.svg?branch=master)](https://travis-ci.org/csujedihy/SwiftDSSocket)
-[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+![SwiftPM Compatible](https://img.shields.io/badge/SwiftPM-Compatible-brightgreen.svg)
 
 # SwiftDSSocket
 

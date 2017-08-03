@@ -12,6 +12,7 @@ import XCTest
 class ConnectAndListen: XCTestCase {
   var client: SwiftDSSocket?
   var server: SwiftDSSocket?
+  var accepted: SwiftDSSocket?
   weak var onAcceptExpectation: XCTestExpectation?
   weak var onConnectExpectation: XCTestExpectation?
   let serverAdress = "127.0.0.1"
@@ -57,6 +58,7 @@ class ConnectAndListen: XCTestCase {
 
 extension ConnectAndListen: SwiftDSSocketDelegate {
   func socket(sock: SwiftDSSocket, didAcceptNewSocket newSocket: SwiftDSSocket) {
+    accepted = newSocket
     SwiftDSSocket.log("@didAcceptNewSocket")
     onAcceptExpectation?.fulfill()
   }

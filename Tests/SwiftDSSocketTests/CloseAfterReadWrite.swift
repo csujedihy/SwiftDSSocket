@@ -12,6 +12,7 @@ import XCTest
 class CloseAfterReadWrite: XCTestCase {
   var client: SwiftDSSocket?
   var server: SwiftDSSocket?
+  var accepted: SwiftDSSocket?
   weak var closeAfterAll: XCTestExpectation?
   weak var finishWrite: XCTestExpectation?
   let serverAdress = "127.0.0.1"
@@ -63,6 +64,7 @@ class CloseAfterReadWrite: XCTestCase {
 
 extension CloseAfterReadWrite: SwiftDSSocketDelegate {
   func socket(sock: SwiftDSSocket, didAcceptNewSocket newSocket: SwiftDSSocket) {
+    accepted = newSocket
     newSocket.readData(toLength: firstPacketSize, tag: ServerTag)
   }
   
