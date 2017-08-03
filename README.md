@@ -64,8 +64,6 @@ To include SwiftDSSocket in a project using Carthage, add a line to your `Cartfi
     github "csujedihy/SwiftDSSocket"
 ```
 
-#### 
-
 ### Documentation
 [http://cocoadocs.org/docsets/SwiftDSSocket/](http://cocoadocs.org/docsets/SwiftDSSocket/)
 

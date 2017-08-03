@@ -28,12 +28,28 @@ import Foundation
   ///   - data: data read from stream
   ///   - tag: a tag to mark this read operation
   @objc optional func socket(sock: SwiftDSSocket, didRead data: Data, tag: Int)
+  /// delegate method called after reading partial data for specified data length from socket
+  /// which allows users to know the progress of transfer
+  /// - Parameters:
+  ///   - sock: SwiftDSSocket instance
+  ///   - totalCount: number of bytes read
+  ///   - tag: a tag to mark this read operation
+  @objc optional func socket(sock: SwiftDSSocket, didPartialRead totalCount: Int, tag: Int)
   /// delegate method called after reading data from socket
   ///
   /// - Parameters:
   ///   - sock: SwiftDSSocket instance
   ///   - tag: a tag to mark this write operation
   @objc optional func socket(sock: SwiftDSSocket, didWrite tag: Int)
+  /// delegate method called after writing partial data for specified data length to socket
+  /// which allows users to know the progress of transfer
+  ///
+  /// - Parameters:
+  ///   - sock: SwiftDSSocket instance
+  ///   - totalCount: number of bytes read
+  ///   - tag: a tag to mark this write operation
+  @objc optional func socket(sock: SwiftDSSocket, didPartialWrite totalCount: Int, tag: Int)
+
   /// delegate method called after closing connection
   ///
   /// - Parameters:
@@ -260,7 +276,9 @@ public class SwiftDSSocket: NSObject {
   /// - kernel: for kernel TCP stream
   public enum SocketType {
     case tcp
+    #if os(macOS)
     case kernel
+    #endif
   }
   
   /// create a new SwiftDSSocket instance by specifying delegate, delegate queue and socket type
@@ -472,7 +490,6 @@ public class SwiftDSSocket: NSObject {
       return
     }
     
-    setNonBlocking(fd: childSocketFD)
     var nonsigpipe: Int32 = 1
     if Darwin.setsockopt(socketFD, SOL_SOCKET, SO_NOSIGPIPE, &nonsigpipe, socklen_t(MemoryLayout<Int32>.size)) != 0 {
       SwiftDSSocket.log("setsockopt failure")
@@ -482,6 +499,7 @@ public class SwiftDSSocket: NSObject {
     let childSocket = SwiftDSSocket(delegate: delegate, delegateQueue: delegateQueue, type: .tcp)
     childSocket.socketFD = childSocketFD
     childSocket.status = .connected
+    childSocket.setNonBlocking()
     
     var hostStringBuf = UnsafeMutablePointer<CChar>.allocate(capacity: Int(INET6_ADDRSTRLEN))
     hostStringBuf.initialize(to: CChar(0))
@@ -503,6 +521,7 @@ public class SwiftDSSocket: NSObject {
   
   
   fileprivate func doWriteData() {
+    SwiftDSSocket.log("@doWriteData")
     var afterWriteAction: SocketIOAfterAction = .waiting
     var socketError: SocketError? = nil
     
@@ -525,14 +544,20 @@ public class SwiftDSSocket: NSObject {
       } while retval == -1 && errno == EINTR
       return retval
     }
-    
+
     if nwritten > 0 {
       currentWrite.bufferOffset += nwritten
+      let theTag = currentWrite.writeTag
       if currentWrite.isDone() {
         writeQueue.removeTop()
         self.currentWrite = nil
         delegateQueue?.async {
-          self.delegate?.socket?(sock: self, didWrite: currentWrite.writeTag)
+          self.delegate?.socket?(sock: self, didWrite: theTag)
+        }
+      } else {
+        let totalbytesWritten = currentWrite.bufferOffset
+        delegateQueue?.async {
+          self.delegate?.socket?(sock: self, didPartialWrite: totalbytesWritten, tag: theTag)
         }
       }
     } else if errno != EWOULDBLOCK {
@@ -583,7 +608,7 @@ public class SwiftDSSocket: NSObject {
       } while nread == -1 && errno == EINTR
       
       if nread > 0 {
-        currentRead.bufferOffset += nread;
+        currentRead.bufferOffset += nread
       } else if nread == -1 && errno != EWOULDBLOCK {
         afterReadAction = .error
         socketError = SocketError(.socketErrorReadSpecific, socketErrorCode: Int(errno))
@@ -595,6 +620,12 @@ public class SwiftDSSocket: NSObject {
         let dataForUserRead = Data(bytesNoCopy: buffer, count: currentRead.bufferCapacity, deallocator: .custom(deallocateBufferBlock))
         delegateQueue?.async {
           self.delegate?.socket?(sock: self, didRead: dataForUserRead, tag: currentRead.readTag)
+        }
+      } else if nread > 0 {
+        let totalBytesRead = currentRead.bufferOffset
+        let theTag = currentRead.readTag
+        delegateQueue?.async {
+          self.delegate?.socket?(sock: self, didPartialRead: totalBytesRead, tag: theTag)
         }
       }
       
@@ -718,21 +749,20 @@ public class SwiftDSSocket: NSObject {
     closeWithError(error: nil)
   }
   
-  fileprivate func setNonBlocking(fd: Int32? = nil) {
-    if let socket = fd {
-      let flags = fcntl(socket, F_GETFL)
-      guard flags >= 0, fcntl(socket, F_SETFL, flags | O_NONBLOCK) >= 0 else {
-        status = .problematic
-        return
-      }
-    } else {
-      let flags = fcntl(socketFD, F_GETFL)
-      guard flags >= 0, fcntl(socketFD, F_SETFL, flags | O_NONBLOCK) >= 0 else {
-        status = .problematic
-        return
-      }
+  fileprivate func setNonBlocking() {
+    let flags = fcntl(socketFD, F_GETFL)
+    if flags == -1 {
+      status = .problematic
+      assert(1 == 2)
+      return
     }
     
+    let retval = fcntl(socketFD, F_SETFL, flags | O_NONBLOCK)
+    if retval == -1 {
+      status = .problematic
+      assert(1 == 2)
+      return
+    }
   }
   
   

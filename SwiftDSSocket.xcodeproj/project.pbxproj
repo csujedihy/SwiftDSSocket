@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C19DA7111F32F8FF009A9581 /* PartialReadAndWrite.swift in Sources */ = {isa = PBXBuildFile; fileRef = C19DA7101F32F8FF009A9581 /* PartialReadAndWrite.swift */; };
 		OBJ_27 /* SwiftDSSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_8 /* SwiftDSSocket.swift */; };
 		OBJ_34 /* CloseAfterReadWrite.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_11 /* CloseAfterReadWrite.swift */; };
 		OBJ_35 /* ConnectAndListen.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_12 /* ConnectAndListen.swift */; };
@@ -27,6 +28,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C19DA7101F32F8FF009A9581 /* PartialReadAndWrite.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PartialReadAndWrite.swift; sourceTree = "<group>"; };
+		C19DA7121F331802009A9581 /* SwiftDSSocket.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SwiftDSSocket.podspec; sourceTree = "<group>"; };
 		OBJ_11 /* CloseAfterReadWrite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloseAfterReadWrite.swift; sourceTree = "<group>"; };
 		OBJ_12 /* ConnectAndListen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectAndListen.swift; sourceTree = "<group>"; };
 		OBJ_13 /* KernelCommunication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KernelCommunication.swift; sourceTree = "<group>"; };
@@ -65,6 +68,7 @@
 				OBJ_13 /* KernelCommunication.swift */,
 				OBJ_14 /* TransferSpecifiedData.swift */,
 				OBJ_15 /* TransferUnspecifiedData.swift */,
+				C19DA7101F32F8FF009A9581 /* PartialReadAndWrite.swift */,
 			);
 			name = SwiftDSSocketTests;
 			path = Tests/SwiftDSSocketTests;
@@ -79,15 +83,15 @@
 			name = Products;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		OBJ_5 /*  */ = {
+		OBJ_5 = {
 			isa = PBXGroup;
 			children = (
+				C19DA7121F331802009A9581 /* SwiftDSSocket.podspec */,
 				OBJ_6 /* Package.swift */,
 				OBJ_7 /* Sources */,
 				OBJ_9 /* Tests */,
 				OBJ_19 /* Products */,
 			);
-			name = "";
 			sourceTree = "<group>";
 		};
 		OBJ_7 /* Sources */ = {
@@ -157,7 +161,7 @@
 			knownRegions = (
 				en,
 			);
-			mainGroup = OBJ_5 /*  */;
+			mainGroup = OBJ_5;
 			productRefGroup = OBJ_19 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -184,6 +188,7 @@
 				OBJ_34 /* CloseAfterReadWrite.swift in Sources */,
 				OBJ_35 /* ConnectAndListen.swift in Sources */,
 				OBJ_36 /* KernelCommunication.swift in Sources */,
+				C19DA7111F32F8FF009A9581 /* PartialReadAndWrite.swift in Sources */,
 				OBJ_37 /* TransferSpecifiedData.swift in Sources */,
 				OBJ_38 /* TransferUnspecifiedData.swift in Sources */,
 			);
