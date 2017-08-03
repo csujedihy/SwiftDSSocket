@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		C19DA7111F32F8FF009A9581 /* PartialReadAndWrite.swift in Sources */ = {isa = PBXBuildFile; fileRef = C19DA7101F32F8FF009A9581 /* PartialReadAndWrite.swift */; };
+		C19DA7141F331C31009A9581 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = C19DA7131F331C31009A9581 /* README.md */; };
 		OBJ_27 /* SwiftDSSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_8 /* SwiftDSSocket.swift */; };
 		OBJ_34 /* CloseAfterReadWrite.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_11 /* CloseAfterReadWrite.swift */; };
 		OBJ_35 /* ConnectAndListen.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_12 /* ConnectAndListen.swift */; };
@@ -30,6 +31,7 @@
 /* Begin PBXFileReference section */
 		C19DA7101F32F8FF009A9581 /* PartialReadAndWrite.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PartialReadAndWrite.swift; sourceTree = "<group>"; };
 		C19DA7121F331802009A9581 /* SwiftDSSocket.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SwiftDSSocket.podspec; sourceTree = "<group>"; };
+		C19DA7131F331C31009A9581 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		OBJ_11 /* CloseAfterReadWrite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloseAfterReadWrite.swift; sourceTree = "<group>"; };
 		OBJ_12 /* ConnectAndListen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectAndListen.swift; sourceTree = "<group>"; };
 		OBJ_13 /* KernelCommunication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KernelCommunication.swift; sourceTree = "<group>"; };
@@ -86,6 +88,7 @@
 		OBJ_5 = {
 			isa = PBXGroup;
 			children = (
+				C19DA7131F331C31009A9581 /* README.md */,
 				C19DA7121F331802009A9581 /* SwiftDSSocket.podspec */,
 				OBJ_6 /* Package.swift */,
 				OBJ_7 /* Sources */,
@@ -177,6 +180,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 0;
 			files = (
+				C19DA7141F331C31009A9581 /* README.md in Sources */,
 				OBJ_27 /* SwiftDSSocket.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -14,7 +14,7 @@
     <a title="SwiftDSSocketDelegate Protocol Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">SwiftDSSocket Docs</a> (68% documented)</p>
+        <p><a href="../index.html">SwiftDSSocket Docs</a> (65% documented)</p>
       </div>
     </header>
     <div class="content-wrapper">
@@ -140,6 +140,77 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:FP13SwiftDSSocket21SwiftDSSocketDelegate6socketFT4sockCS_13SwiftDSSocket14didPartialReadSi3tagSi_T_"></a>
+                    <a name="//apple_ref/swift/Method/socket(sock:didPartialRead:tag:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FP13SwiftDSSocket21SwiftDSSocketDelegate6socketFT4sockCS_13SwiftDSSocket14didPartialReadSi3tagSi_T_">socket(sock:didPartialRead:tag:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>delegate method called after reading partial data for specified data length from socket
+which allows users to know the progress of transfer</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">@objc</span> <span class="kd">optional</span> <span class="kd">func</span> <span class="nf">socket</span><span class="p">(</span><span class="nv">sock</span><span class="p">:</span> <span class="kt"><a href="../Classes/SwiftDSSocket.html">SwiftDSSocket</a></span><span class="p">,</span> <span class="n">didPartialRead</span> <span class="nv">totalCount</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="nv">tag</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>sock</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>SwiftDSSocket instance</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>totalCount</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>number of bytes read</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>tag</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a tag to mark this read operation</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:FP13SwiftDSSocket21SwiftDSSocketDelegate6socketFT4sockCS_13SwiftDSSocket8didWriteSi_T_"></a>
                     <a name="//apple_ref/swift/Method/socket(sock:didWrite:)" class="dashAnchor"></a>
                     <a class="token" href="#/s:FP13SwiftDSSocket21SwiftDSSocketDelegate6socketFT4sockCS_13SwiftDSSocket8didWriteSi_T_">socket(sock:didWrite:)</a>
@@ -174,6 +245,77 @@
                               <td>
                                 <div>
                                   <p>SwiftDSSocket instance</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>tag</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a tag to mark this write operation</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FP13SwiftDSSocket21SwiftDSSocketDelegate6socketFT4sockCS_13SwiftDSSocket15didPartialWriteSi3tagSi_T_"></a>
+                    <a name="//apple_ref/swift/Method/socket(sock:didPartialWrite:tag:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FP13SwiftDSSocket21SwiftDSSocketDelegate6socketFT4sockCS_13SwiftDSSocket15didPartialWriteSi3tagSi_T_">socket(sock:didPartialWrite:tag:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>delegate method called after writing partial data for specified data length to socket
+which allows users to know the progress of transfer</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">@objc</span> <span class="kd">optional</span> <span class="kd">func</span> <span class="nf">socket</span><span class="p">(</span><span class="nv">sock</span><span class="p">:</span> <span class="kt"><a href="../Classes/SwiftDSSocket.html">SwiftDSSocket</a></span><span class="p">,</span> <span class="n">didPartialWrite</span> <span class="nv">totalCount</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="nv">tag</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>sock</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>SwiftDSSocket instance</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>totalCount</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>number of bytes read</p>
                                 </div>
                               </td>
                             </tr>
@@ -386,7 +528,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2017 <a class="link" href="https://github.com/csujedihy/SwiftDSSocket" target="_blank" rel="external">jedihy</a>. All rights reserved. (Last updated: 2017-07-31)</p>
+          <p>&copy; 2017 <a class="link" href="https://github.com/csujedihy/SwiftDSSocket" target="_blank" rel="external">jedihy</a>. All rights reserved. (Last updated: 2017-08-03)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.3</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

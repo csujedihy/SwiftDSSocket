@@ -2,14 +2,84 @@
   "warnings": [
     {
       "file": "/Users/jedihy/Documents/Project/SwiftDSSocket/SwiftDSSocket/SwiftDSSocket.swift",
-      "line": 247,
+      "line": 231,
+      "symbol": "SwiftDSSocket.SocketError.ErrorKind.socketErrorFCNTL",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jedihy/Documents/Project/SwiftDSSocket/SwiftDSSocket/SwiftDSSocket.swift",
+      "line": 232,
+      "symbol": "SwiftDSSocket.SocketError.ErrorKind.socketErrorDefault",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jedihy/Documents/Project/SwiftDSSocket/SwiftDSSocket/SwiftDSSocket.swift",
+      "line": 233,
+      "symbol": "SwiftDSSocket.SocketError.ErrorKind.socketErrorIOCTL",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jedihy/Documents/Project/SwiftDSSocket/SwiftDSSocket/SwiftDSSocket.swift",
+      "line": 234,
+      "symbol": "SwiftDSSocket.SocketError.ErrorKind.socketErrorWrongAddress",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jedihy/Documents/Project/SwiftDSSocket/SwiftDSSocket/SwiftDSSocket.swift",
+      "line": 235,
+      "symbol": "SwiftDSSocket.SocketError.ErrorKind.socketErrorAlreadyConnected",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jedihy/Documents/Project/SwiftDSSocket/SwiftDSSocket/SwiftDSSocket.swift",
+      "line": 236,
+      "symbol": "SwiftDSSocket.SocketError.ErrorKind.socketErrorIncorrectSocketStatus",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jedihy/Documents/Project/SwiftDSSocket/SwiftDSSocket/SwiftDSSocket.swift",
+      "line": 237,
+      "symbol": "SwiftDSSocket.SocketError.ErrorKind.socketErrorConnecting",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jedihy/Documents/Project/SwiftDSSocket/SwiftDSSocket/SwiftDSSocket.swift",
+      "line": 238,
+      "symbol": "SwiftDSSocket.SocketError.ErrorKind.socketErrorReadSpecific",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jedihy/Documents/Project/SwiftDSSocket/SwiftDSSocket/SwiftDSSocket.swift",
+      "line": 239,
+      "symbol": "SwiftDSSocket.SocketError.ErrorKind.socketErrorWriteSpecific",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jedihy/Documents/Project/SwiftDSSocket/SwiftDSSocket/SwiftDSSocket.swift",
+      "line": 240,
+      "symbol": "SwiftDSSocket.SocketError.ErrorKind.socketErrorSetSockOpt",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jedihy/Documents/Project/SwiftDSSocket/SwiftDSSocket/SwiftDSSocket.swift",
+      "line": 262,
       "symbol": "SwiftDSSocket.SocketType.tcp",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jedihy/Documents/Project/SwiftDSSocket/SwiftDSSocket/SwiftDSSocket.swift",
-      "line": 248,
+      "line": 263,
       "symbol": "SwiftDSSocket.SocketType.kernel",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"

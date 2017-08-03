@@ -4,6 +4,8 @@
 [![CocoaPods](https://img.shields.io/cocoapods/v/SwiftDSSocket.svg?style=flat)](http://cocoadocs.org/docsets/SwiftDSSocket)
 [![Travis-CI](https://api.travis-ci.org/csujedihy/SwiftDSSocket.svg?branch=master)](https://travis-ci.org/csujedihy/SwiftDSSocket)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+![Coverage](https://raw.githubusercontent.com/csujedihy/SwiftDSSocket/master/docs/badge.svg)
+
 
 # SwiftDSSocket
 

@@ -13,7 +13,7 @@
     <a title="SwiftDSSocket  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html">SwiftDSSocket Docs</a> (68% documented)</p>
+        <p><a href="index.html">SwiftDSSocket Docs</a> (65% documented)</p>
       </div>
     </header>
     <div class="content-wrapper">
@@ -54,19 +54,105 @@
         <section>
           <section class="section">
             
-            <h1 id='swiftdssocket' class='heading'>SwiftDSSocket</h1>
-<h3 id='dispatchsource-based-sockets-framework-written-in-pure-swift-3-1' class='heading'>DispatchSource based sockets framework written in pure Swift 3.1</h3>
-<h3 id='installation' class='heading'>Installation</h3>
-<pre class="highlight ruby"><code><span class="n">pod</span> <span class="s1">'SwiftDSSocket'</span>
-</code></pre>
-<h3 id='authors' class='heading'>Authors</h3>
+            <p><img src="https://img.shields.io/badge/macOS-10.10%2B-green.svg?style=flat" alt="macOS">
+<img src="https://img.shields.io/badge/iOS-9.0%2B-green.svg?style=flat" alt="iOS">
+<img src="https://img.shields.io/badge/Swift-3.1-orange.svg?style=flat" alt="Swift Version">
+<a href="http://cocoadocs.org/docsets/SwiftDSSocket"><img src="https://img.shields.io/cocoapods/v/SwiftDSSocket.svg?style=flat" alt="CocoaPods"></a>
+<a href="https://travis-ci.org/csujedihy/SwiftDSSocket"><img src="https://api.travis-ci.org/csujedihy/SwiftDSSocket.svg?branch=master" alt="Travis-CI"></a>
+<a href="https://github.com/Carthage/Carthage"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat" alt="Carthage compatible"></a></p>
+<h1 id='swiftdssocket' class='heading'>SwiftDSSocket</h1>
+<h2 id='overview' class='heading'>Overview</h2>
 
-<p>jedihy</p>
+<p>SwiftDSSocket is a purely swift based <strong>asynchronous</strong> socket framework built atop DispatchSource. Function signatures are pretty much similar to those in CocoaAsyncSocket because I implemented this framework by learning the source code of CocoaAsyncSocket. The initial idea to build this farmework is driven by the need of network library to communicate with KEXT (NKE) to re-write my <a href="https://github.com/csujedihy/proximac">Proximac</a> project but none of frameworks I found in github supports that. Thus, I decided to implemented my own framework to do so.</p>
+
+<p><strong>Note:</strong> This framework is still under active development. It only passes my unit tests and might have various bugs.</p>
+<h2 id='features' class='heading'>Features</h2>
+<h3 id='full-delegate-support' class='heading'>Full Delegate Support</h3>
+
+<ul>
+<li>every operation invokes a call to your delagate method.</li>
+</ul>
+<h3 id='ipv6-support' class='heading'>IPv6 Support</h3>
+
+<ul>
+<li>listens only on IPv6 protocol but <strong>accepts both</strong> IPv4 and IPv6 incoming connections.</li>
+<li>conforms to Apple&rsquo;s new App Store restriction on IPv6 only environment with NAT64/DNS64.</li>
+</ul>
+<h3 id='dns-enabled' class='heading'>DNS Enabled</h3>
+
+<ul>
+<li>takes advantage of sythesized IPv6 address introduced in <code>iOS 9</code> and <code>OS X 10.11</code> for better IPv6 support.</li>
+<li>uses GCD to do DNS concurrently and connect to the first reachable address.</li>
+</ul>
+<h3 id='kext-bi-directional-interaction' class='heading'>KEXT Bi-directional Interaction</h3>
+
+<ul>
+<li>takes a bundle ID to interact with your KEXT like TCP stream.</li>
+</ul>
+<h2 id='using-swiftdssocket' class='heading'>Using SwiftDSSocket</h2>
+<h3 id='including-in-your-project' class='heading'>Including in your project</h3>
+<h4 id='swift-package-manager' class='heading'>Swift Package Manager</h4>
+
+<p>To include SwiftDSSocket into a Swift Package Manager package, add it to the <code>dependencies</code> attribute defined in your <code>Package.swift</code> file. For example:</p>
+<pre class="highlight plaintext"><code>    dependencies: [
+        .Package(url: "https://github.com/csujedihy/SwiftDSSocket", "x.x.x")
+    ]
+</code></pre>
+<h4 id='cocoapods' class='heading'>CocoaPods</h4>
+
+<p>To include SwiftDSSocket in a project using CocoaPods, you just add <code>SwiftDSSocket</code> to your <code>Podfile</code>, for example:</p>
+<pre class="highlight plaintext"><code>    target 'MyApp' do
+        use_frameworks!
+        pod 'SwiftDSSocket'
+    end
+</code></pre>
+<h4 id='carthage' class='heading'>Carthage</h4>
+
+<p>To include SwiftDSSocket in a project using Carthage, add a line to your <code>Cartfile</code> with the GitHub organization and project names and version. For example:</p>
+<pre class="highlight plaintext"><code>    github "csujedihy/SwiftDSSocket"
+</code></pre>
+<h3 id='documentation' class='heading'>Documentation</h3>
+
+<p><a href="http://cocoadocs.org/docsets/SwiftDSSocket/">http://cocoadocs.org/docsets/SwiftDSSocket/</a></p>
+<h3 id='example' class='heading'>Example:</h3>
+
+<p>The following example creates a default <code>SwiftDSSocket</code> instance and then <em>immediately</em> starts listening on port <code>9999</code> and echoes back everything sent to this server.</p>
+
+<p>You can simply use <code>telnet 127.0.0.1 9999</code> to connect to this server and send whatever you want.</p>
+<pre class="highlight swift"><code><span class="kd">import</span> <span class="kt">Cocoa</span>
+<span class="kd">import</span> <span class="kt">SwiftDSSocket</span>
+
+<span class="kd">class</span> <span class="kt">ViewController</span><span class="p">:</span> <span class="kt">NSViewController</span> <span class="p">{</span>
+  <span class="k">var</span> <span class="nv">server</span><span class="p">:</span> <span class="kt">SwiftDSSocket</span><span class="p">?</span>
+  <span class="k">let</span> <span class="nv">ServerTag</span> <span class="o">=</span> <span class="mi">0</span>
+
+  <span class="k">override</span> <span class="kd">func</span> <span class="nf">viewDidLoad</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">super</span><span class="o">.</span><span class="nf">viewDidLoad</span><span class="p">()</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="kt">SwiftDSSocket</span><span class="p">(</span><span class="nv">delegate</span><span class="p">:</span> <span class="k">self</span><span class="p">,</span> <span class="nv">delegateQueue</span><span class="p">:</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span> <span class="nv">type</span><span class="p">:</span> <span class="o">.</span><span class="n">tcp</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">?</span> <span class="n">server</span><span class="p">?</span><span class="o">.</span><span class="nf">accept</span><span class="p">(</span><span class="nv">onPort</span><span class="p">:</span> <span class="mi">9999</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+
+<span class="kd">extension</span> <span class="kt">ViewController</span><span class="p">:</span> <span class="kt">SwiftDSSocketDelegate</span> <span class="p">{</span>
+  <span class="kd">func</span> <span class="nf">socket</span><span class="p">(</span><span class="nv">sock</span><span class="p">:</span> <span class="kt">SwiftDSSocket</span><span class="p">,</span> <span class="n">didAcceptNewSocket</span> <span class="nv">newSocket</span><span class="p">:</span> <span class="kt">SwiftDSSocket</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">newSocket</span><span class="o">.</span><span class="nf">readData</span><span class="p">(</span><span class="nv">tag</span><span class="p">:</span> <span class="kt">ServerTag</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="kd">func</span> <span class="nf">socket</span><span class="p">(</span><span class="nv">sock</span><span class="p">:</span> <span class="kt">SwiftDSSocket</span><span class="p">,</span> <span class="n">didRead</span> <span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">,</span> <span class="nv">tag</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">sock</span><span class="o">.</span><span class="nf">write</span><span class="p">(</span><span class="nv">data</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span> <span class="nv">tag</span><span class="p">:</span> <span class="kt">ServerTag</span><span class="p">)</span>
+    <span class="n">sock</span><span class="o">.</span><span class="nf">readData</span><span class="p">(</span><span class="nv">tag</span><span class="p">:</span> <span class="kt">ServerTag</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre>
+
+<p><strong>Tips:</strong> Check out <code>Demo</code> folder to see more examples for different environments.</p>
 
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2017 <a class="link" href="https://github.com/csujedihy/SwiftDSSocket" target="_blank" rel="external">jedihy</a>. All rights reserved. (Last updated: 2017-07-31)</p>
+          <p>&copy; 2017 <a class="link" href="https://github.com/csujedihy/SwiftDSSocket" target="_blank" rel="external">jedihy</a>. All rights reserved. (Last updated: 2017-08-03)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.3</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
