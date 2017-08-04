@@ -54,12 +54,13 @@
         <section>
           <section class="section">
             
-            <p><img src="https://img.shields.io/badge/macOS-10.10%2B-green.svg?style=flat" alt="macOS">
+            <p><a href="https://travis-ci.org/csujedihy/SwiftDSSocket"><img src="https://api.travis-ci.org/csujedihy/SwiftDSSocket.svg?branch=master" alt="Travis-CI"></a>
+<img src="https://img.shields.io/badge/macOS-10.10%2B-green.svg?style=flat" alt="macOS">
 <img src="https://img.shields.io/badge/iOS-9.0%2B-green.svg?style=flat" alt="iOS">
 <img src="https://img.shields.io/badge/Swift-3.1-orange.svg?style=flat" alt="Swift Version">
 <a href="http://cocoadocs.org/docsets/SwiftDSSocket"><img src="https://img.shields.io/cocoapods/v/SwiftDSSocket.svg?style=flat" alt="CocoaPods"></a>
-<a href="https://travis-ci.org/csujedihy/SwiftDSSocket"><img src="https://api.travis-ci.org/csujedihy/SwiftDSSocket.svg?branch=master" alt="Travis-CI"></a>
-<a href="https://github.com/Carthage/Carthage"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat" alt="Carthage compatible"></a></p>
+<a href="https://github.com/Carthage/Carthage"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat" alt="Carthage Compatible"></a>
+<img src="https://img.shields.io/badge/SwiftPM-Compatible-brightgreen.svg" alt="SwiftPM Compatible"></p>
 <h1 id='swiftdssocket' class='heading'>SwiftDSSocket</h1>
 <h2 id='overview' class='heading'>Overview</h2>
 
@@ -124,6 +125,7 @@
 
 <span class="kd">class</span> <span class="kt">ViewController</span><span class="p">:</span> <span class="kt">NSViewController</span> <span class="p">{</span>
   <span class="k">var</span> <span class="nv">server</span><span class="p">:</span> <span class="kt">SwiftDSSocket</span><span class="p">?</span>
+  <span class="k">var</span> <span class="nv">newClient</span><span class="p">:</span> <span class="kt">SwiftDSSocket</span><span class="p">?</span>
   <span class="k">let</span> <span class="nv">ServerTag</span> <span class="o">=</span> <span class="mi">0</span>
 
   <span class="k">override</span> <span class="kd">func</span> <span class="nf">viewDidLoad</span><span class="p">()</span> <span class="p">{</span>
@@ -136,6 +138,7 @@
 
 <span class="kd">extension</span> <span class="kt">ViewController</span><span class="p">:</span> <span class="kt">SwiftDSSocketDelegate</span> <span class="p">{</span>
   <span class="kd">func</span> <span class="nf">socket</span><span class="p">(</span><span class="nv">sock</span><span class="p">:</span> <span class="kt">SwiftDSSocket</span><span class="p">,</span> <span class="n">didAcceptNewSocket</span> <span class="nv">newSocket</span><span class="p">:</span> <span class="kt">SwiftDSSocket</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">newClient</span> <span class="o">=</span> <span class="n">newSocket</span>
     <span class="n">newSocket</span><span class="o">.</span><span class="nf">readData</span><span class="p">(</span><span class="nv">tag</span><span class="p">:</span> <span class="kt">ServerTag</span><span class="p">)</span>
   <span class="p">}</span>
 
