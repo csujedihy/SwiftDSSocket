@@ -657,7 +657,7 @@ public class SwiftDSSocket: NSObject {
       if nread > 0 {
         readQueue.removeTop()
         self.currentRead = nil
-        let dataForUserRead = Data(bytesNoCopy: buffer, count: nread, deallocator: Data.Deallocator.custom(deallocateBufferBlock))
+        let dataForUserRead = Data(bytesNoCopy: buffer, count: nread, deallocator: .custom(deallocateBufferBlock))
         delegateQueue?.async {
           self.delegate?.socket?(sock: self, didRead: dataForUserRead, tag: currentRead.readTag)
         }
@@ -756,9 +756,13 @@ public class SwiftDSSocket: NSObject {
 
   fileprivate func doReadEOF() {
     if let currentRead = currentRead, currentRead.isSpecifiedLength(), let buffer = currentRead.buffer {
-      let data = Data(bytesNoCopy: buffer, count: currentRead.bufferOffset, deallocator: .free)
+      let bufferCapacity = currentRead.bufferCapacity
+      let data = Data(bytesNoCopy: buffer, count: currentRead.bufferOffset, deallocator: .custom({ (ptr, _) in
+        ptr.deallocate(bytes: bufferCapacity, alignedTo: 1)
+      }))
+      let theTag = currentRead.readTag
       delegateQueue?.async {
-        self.delegate?.socket?(sock: self, didRead: data, tag: currentRead.readTag)
+        self.delegate?.socket?(sock: self, didRead: data, tag: theTag)
       }
     }
     closeWithError(error: nil)
@@ -791,6 +795,8 @@ public class SwiftDSSocket: NSObject {
 
     try socketQueue.sync {
       guard status == .initial else { throw SocketError(.socketErrorIncorrectSocketStatus) }
+      readQueue.removeAll()
+      writeQueue.removeAll()
       status = .connecting
       DispatchQueue.global(qos: .default).async {
         var addrInfo = addrinfo()
@@ -863,6 +869,8 @@ public class SwiftDSSocket: NSObject {
   #if os(macOS)
   public func connect(tobundleName bundleName: String) throws {
     try socketQueue.sync {
+      readQueue.removeAll()
+      writeQueue.removeAll()
       var sockAddrControl = sockaddr_ctl()
       let ctlInfoSize = MemoryLayout<ctl_info>.stride
       let ctlInfoPtr = UnsafeMutablePointer<UInt8>.allocate(capacity: ctlInfoSize)
