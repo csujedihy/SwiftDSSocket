@@ -33,7 +33,7 @@ class ConnectAndListen: XCTestCase {
   
   func testExample() {
     try? server?.accept(onPort: serverPort)
-    try? client?.tryConnect(toHost: serverAdress, port: serverPort)
+    try? client?.connect(toHost: serverAdress, port: serverPort)
     onConnectExpectation = expectation(description: "Test Connect")
     onAcceptExpectation = expectation(description: "Test Listen")
     

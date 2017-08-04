@@ -41,7 +41,7 @@ class TransferSpecifiedData: XCTestCase {
   
   func testExample() {
     try? server?.accept(onPort: serverPort)
-    try? client?.tryConnect(toHost: serverAdress, port: serverPort)
+    try? client?.connect(toHost: serverAdress, port: serverPort)
     finishWrite = expectation(description: "Finshed Write Correctlly")
     let seq: [UInt] = [firstPacketSize, secondPacketSize]
     

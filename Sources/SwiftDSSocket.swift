@@ -11,12 +11,19 @@
 // 2. this library automatically creates a queue for socket handlers
 
 import Foundation
+import Darwin
 
-#if os(Linux)
-  import Glibc
-#else // os(Darwin)
-  import Darwin
-#endif
+let sysSocket = Darwin.socket
+let sysListen = Darwin.listen
+let sysConnect = Darwin.connect
+let sysAccept = Darwin.accept
+let sysBind = Darwin.bind
+let sysRead = Darwin.read
+let sysWrite = Darwin.write
+let sysSetSockOpt = Darwin.setsockopt
+let sysGetSockOpt = Darwin.getsockopt
+let sysDNS = Darwin.getaddrinfo
+let sysClose = { _ = Darwin.close($0) }
 
 
 /// delegate methods for each operation
@@ -74,36 +81,36 @@ import Foundation
 struct Queue<T> {
   fileprivate var array = [T?]()
   fileprivate var head = 0
-  
+
   public var isEmpty: Bool {
     return count == 0
   }
-  
+
   public var count: Int {
     return array.count - head
   }
-  
+
   public mutating func removeAll() {
     array.removeAll()
   }
-  
+
   public mutating func enqueue(_ element: T) {
     array.append(element)
   }
-  
+
   public mutating func removeTop() {
     guard head < array.count else { return }
-    
+
     array[head] = nil
     head += 1
-    
+
     let percentage = Double(head) / Double(array.count)
     if array.count > 50 && percentage > 0.25 {
       array.removeFirst(head)
       head = 0
     }
   }
-  
+
   public var front: T? {
     if isEmpty {
       return nil
@@ -118,7 +125,7 @@ class SwiftDSSocketReadPacket: NSObject {
   var bufferCapacity = 0
   var bufferOffset = 0
   var readTag = 0
-  
+
   init(capacity: Int, tag: Int = -1) {
     if capacity > 0 {
       self.buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: capacity)
@@ -126,20 +133,20 @@ class SwiftDSSocketReadPacket: NSObject {
     self.bufferCapacity = capacity
     self.readTag = tag
   }
-  
+
   func isSpecifiedLength() -> Bool {
     return bufferCapacity != 0
   }
-  
+
   func spaceFull() -> Bool {
     return availabeSpace() == 0
   }
-  
+
   func availabeSpace() -> Int {
     assert(bufferCapacity - bufferOffset >= 0)
     return bufferCapacity - bufferOffset
   }
-  
+
 }
 
 
@@ -148,21 +155,21 @@ class SwiftDSSocketWritePacket: NSObject {
   var bufferCapacity = 0
   var bufferOffset = 0
   var writeTag = 0
-  
+
   init(data: Data, tag: Int = -1) {
     self.buffer = data
     self.bufferCapacity = data.count
     self.writeTag = tag
   }
-  
+
   func isDone() -> Bool {
     return bufferOffset == bufferCapacity
   }
-  
+
   func availableBytes() -> Int {
     return bufferCapacity - bufferOffset
   }
-  
+
 }
 
 
@@ -189,13 +196,13 @@ public class SwiftDSSocket: NSObject {
   fileprivate var writeQueue = Queue<SwiftDSSocketWritePacket>()
   fileprivate var currentRead: SwiftDSSocketReadPacket?
   fileprivate var currentWrite: SwiftDSSocketWritePacket?
-  
+
   /// store user data that can be used for context
   public var userData: Any?
   /// debug option (might be deprecated in future)
   public static var debugMode = false
-  
-  
+
+
   fileprivate enum SocketStatus: Int, Comparable {
     case initial = 0
     case listening = 1
@@ -205,30 +212,30 @@ public class SwiftDSSocket: NSObject {
     case closing = 5
     case closed = 6
     case problematic = 7
-    
+
     public static func < (a: SocketStatus, b: SocketStatus) -> Bool {
       return a.rawValue < b.rawValue
     }
-    
+
     public static func <= (a: SocketStatus, b: SocketStatus) -> Bool {
       return a.rawValue <= b.rawValue
     }
   }
-  
+
   fileprivate enum SocketIOAfterAction {
     case waiting
     case suspend
     case eof
     case error
   }
-  
+
   fileprivate enum CloseCondition {
     case none
     case afterReads
     case afterWrites
     case afterBoth
   }
-  
+
   /// this defines all kinds of error in SwiftDSSocket
   public class SocketError: NSObject, Error {
     /// Kinds of Error in SocketError
@@ -255,21 +262,21 @@ public class SwiftDSSocket: NSObject {
       case socketErrorWriteSpecific
       case socketErrorSetSockOpt
     }
-    
+
     /// specifies error kind
     public var errorKind: ErrorKind?
     /// specifies error code (only for BSD socket standard error code)
     public var socketErrorCode: Int?
     /// a description string for this error
     public var localizedDescription: String?
-    
+
     init(_ errorKind: ErrorKind, socketErrorCode: Int? = nil, errorDescription: String? = nil) {
       self.errorKind = errorKind
       self.socketErrorCode = socketErrorCode
       self.localizedDescription = errorDescription
     }
   }
-  
+
   /// Socket Type
   ///
   /// - tcp: for TCP stream
@@ -280,7 +287,7 @@ public class SwiftDSSocket: NSObject {
     case kernel
     #endif
   }
-  
+
   /// create a new SwiftDSSocket instance by specifying delegate, delegate queue and socket type
   ///
   /// - Parameters:
@@ -292,25 +299,25 @@ public class SwiftDSSocket: NSObject {
     self.delegate = delegate
     self.delegateQueue = delegateQueue
     self.socketType = type
-    
+
     #if os(macOS)
     if type == .kernel {
-      socketFD = Darwin.socket(PF_SYSTEM, SOCK_STREAM, SYSPROTO_CONTROL)
+      socketFD = sysSocket(PF_SYSTEM, SOCK_STREAM, SYSPROTO_CONTROL)
       setNonBlocking()
     }
     #endif
-    
+
   }
-  
-  
+
+
   @inline(__always)
   static func log(_ message: String) {
     if debugMode {
       NSLog("%@", message)
     }
   }
-  
-  
+
+
   @inline(__always)
   static func assert(_ expr: Bool, _ errorMessage: String, _ block: () -> Void = {}) {
     if !expr {
@@ -319,8 +326,8 @@ public class SwiftDSSocket: NSObject {
       exit(1)
     }
   }
-  
-  
+
+
   @inline(__always)
   static func fatal(_ message: String, _ block: () -> Void = {}) -> Never {
     NSLog("%@\n", message)
@@ -328,59 +335,59 @@ public class SwiftDSSocket: NSObject {
     block()
     exit(1)
   }
-  
+
   fileprivate func deallocateBufferBlock(ptr: UnsafeMutableRawPointer, capacity: Int) {
     ptr.deallocate(bytes: capacity, alignedTo: 1)
   }
-  
+
   fileprivate func suspendReadDispatchSource() {
     if (!isReadDispatchSourceSuspended) {
       readDispatchSource?.suspend()
       isReadDispatchSourceSuspended = true
     }
   }
-  
-  
+
+
   fileprivate func resumeReadDispatchSource() {
     if (isReadDispatchSourceSuspended) {
       readDispatchSource?.resume()
       isReadDispatchSourceSuspended = false
     }
   }
-  
-  
+
+
   fileprivate func suspendWriteDispatchSource() {
     if (!isWriteDispatchSourceSuspended) {
       writeDispatchSource?.suspend()
       isWriteDispatchSourceSuspended = true
     }
   }
-  
-  
+
+
   fileprivate func resumeWriteDispatchSource() {
     if (isWriteDispatchSourceSuspended) {
       writeDispatchSource?.resume()
       isWriteDispatchSourceSuspended = false
     }
   }
-  
-  
+
+
   fileprivate func suspendAcceptDispatchSource() {
     if (!isAcceptDispatchSourceSuspended) {
       acceptDispatchSource?.suspend()
       isAcceptDispatchSourceSuspended = true
     }
   }
-  
-  
+
+
   fileprivate func resumeAcceptDispatchSource() {
     if (isAcceptDispatchSourceSuspended) {
       acceptDispatchSource?.resume()
       isAcceptDispatchSourceSuspended = false
     }
   }
-  
-  
+
+
   fileprivate func setupWatchersForNewConnectedSocket(peerHost: String, peerPort: UInt16) {
     assert(writeDispatchSource == nil && readDispatchSource == nil)
     self.writeDispatchSource = DispatchSource.makeWriteSource(fileDescriptor: socketFD, queue: socketQueue)
@@ -388,7 +395,7 @@ public class SwiftDSSocket: NSObject {
     guard let readDispatchSource = readDispatchSource, let writeDispatchSource = writeDispatchSource else {
       return
     }
-    
+
     writeDispatchSource.setEventHandler { [weak self] in
       guard let strongSelf = self else { return }
       if strongSelf.status == .connecting {
@@ -397,11 +404,11 @@ public class SwiftDSSocket: NSObject {
           strongSelf.delegate?.socket?(sock: strongSelf, didConnectToHost: peerHost, port: peerPort)
         }
       }
-      
+
       strongSelf.doWriteData()
     }
-    
-    
+
+
     readDispatchSource.setEventHandler { [weak self] in
       guard let strongSelf = self else { return }
       let nAvailable: Int = Int(readDispatchSource.data)
@@ -411,12 +418,12 @@ public class SwiftDSSocket: NSObject {
         strongSelf.doReadEOF()
       }
     }
-    
+
     resumeReadDispatchSource()
     resumeWriteDispatchSource()
   }
-  
-  
+
+
   /// listen on a specified port for both IPv4/IPv6
   ///
   /// - Parameter port: port number in UInt16
@@ -424,42 +431,44 @@ public class SwiftDSSocket: NSObject {
   public func accept(onPort port: UInt16) throws {
     try socketQueue.sync {
       guard status == .initial else { throw SocketError(.socketErrorIncorrectSocketStatus) }
-      socketFD = socket(AF_INET6, SOCK_STREAM, 0)
+      socketFD = sysSocket(AF_INET6, SOCK_STREAM, 0)
       setNonBlocking()
       var sockAddr = sockaddr_in6()
       sockAddr.sin6_len = UInt8(MemoryLayout<sockaddr_in6>.size)
       sockAddr.sin6_port = port.bigEndian
       sockAddr.sin6_family = sa_family_t(AF_INET6)
       sockAddr.sin6_addr = in6addr_any
-      
+
       var reuse: Int32 = 1
-      if Darwin.setsockopt(socketFD, SOL_SOCKET, SO_REUSEADDR, &reuse, socklen_t(MemoryLayout<Int32>.size)) != 0 {
+      if sysSetSockOpt(socketFD, SOL_SOCKET, SO_REUSEADDR, &reuse, socklen_t(MemoryLayout<Int32>.size)) != 0 {
         throw SocketError(.socketErrorSetSockOpt, socketErrorCode: Int(errno))
       }
-      
+
       guard (withUnsafePointer(to: &sockAddr) {
         return $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
           var ret:Int32 = 0
           repeat {
             errno = 0
-            ret = Darwin.bind(socketFD, $0, socklen_t(MemoryLayout<sockaddr_in6>.size))
+            ret = sysBind(socketFD, $0, socklen_t(MemoryLayout<sockaddr_in6>.size))
           } while ret == -1 && errno == EINTR
           return ret != -1
         }
       }) else {
         SwiftDSSocket.log("binding failed")
-        close(socketFD)
+        sysClose(socketFD)
+        socketFD = -1
         throw SocketError(.socketErrorConnecting)
       }
-      
-      guard 1 != Darwin.listen(socketFD, 1024) else {
+
+      guard 1 != sysListen(socketFD, 1024) else {
         SwiftDSSocket.log("listen() failed")
-        close(socketFD)
+        sysClose(socketFD)
+        socketFD = -1
         return
       }
-      
+
       status = .listening
-      
+
       acceptDispatchSource = DispatchSource.makeReadSource(fileDescriptor: socketFD, queue: socketQueue)
       acceptDispatchSource?.setEventHandler { [weak self] in
         guard let strongSelf = self else { return }
@@ -468,12 +477,12 @@ public class SwiftDSSocket: NSObject {
           strongSelf.doAccept(strongSelf.socketFD)
         }
       }
-      
+
       resumeAcceptDispatchSource()
     }
   }
-  
-  
+
+
   fileprivate func doAccept(_ socketFD: Int32) {
     var sockAddr = sockaddr_in6()
     var sockLen: socklen_t = socklen_t(MemoryLayout<sockaddr_in6>.size)
@@ -482,37 +491,37 @@ public class SwiftDSSocket: NSObject {
         var ret:Int32 = 0
         repeat {
           errno = 0
-          ret = Darwin.accept(socketFD, UnsafeMutablePointer($0), &sockLen)
+          ret = sysAccept(socketFD, UnsafeMutablePointer($0), &sockLen)
         } while ret == -1 && errno == EINTR
         return ret
       }
     })
-    
+
     if childSocketFD == -1 {
       SwiftDSSocket.log("accept failure")
       return
     }
-    
+
     var nonsigpipe: Int32 = 1
-    if Darwin.setsockopt(socketFD, SOL_SOCKET, SO_NOSIGPIPE, &nonsigpipe, socklen_t(MemoryLayout<Int32>.size)) != 0 {
+    if sysSetSockOpt(socketFD, SOL_SOCKET, SO_NOSIGPIPE, &nonsigpipe, socklen_t(MemoryLayout<Int32>.size)) != 0 {
       SwiftDSSocket.log("setsockopt failure")
       return
     }
-    
+
     let childSocket = SwiftDSSocket(delegate: delegate, delegateQueue: delegateQueue, type: .tcp)
     childSocket.socketFD = childSocketFD
     childSocket.status = .connected
     childSocket.setNonBlocking()
-    
+
     var hostStringBuf = UnsafeMutablePointer<CChar>.allocate(capacity: Int(INET6_ADDRSTRLEN))
     hostStringBuf.initialize(to: CChar(0))
     defer {
       hostStringBuf.deinitialize()
       hostStringBuf.deallocate(capacity: Int(INET6_ADDRSTRLEN))
     }
-    
+
     inet_ntop(AF_INET6, &sockAddr.sin6_addr, hostStringBuf, socklen_t(INET6_ADDRSTRLEN))
-    
+
     let peerHostName = String(cString: UnsafePointer<CChar>(hostStringBuf))
     let peerPort = in_port_t(bigEndian: sockAddr.sin6_port)
     SwiftDSSocket.log("host: \(peerHostName) port: \(peerPort)")
@@ -521,29 +530,29 @@ public class SwiftDSSocket: NSObject {
       self.delegate?.socket?(sock: self, didAcceptNewSocket: childSocket)
     }
   }
-  
-  
+
+
   fileprivate func doWriteData() {
     SwiftDSSocket.log("@doWriteData")
     var afterWriteAction: SocketIOAfterAction = .waiting
     var socketError: SocketError? = nil
-    
+
     guard !writeQueue.isEmpty else {
       suspendWriteDispatchSource()
       return
     }
-    
+
     if currentWrite == nil {
       currentWrite = writeQueue.front
     }
-    
+
     guard let currentWrite = currentWrite, let buffer = currentWrite.buffer else { return }
     assert(!currentWrite.isDone())
     let nwritten = buffer.withUnsafeBytes { (ptr: UnsafePointer<UInt8>) -> Int in
       var retval = 0
       repeat {
         errno = 0
-        retval = Darwin.write(socketFD, ptr.advanced(by: currentWrite.bufferOffset), currentWrite.availableBytes())
+        retval = sysWrite(socketFD, ptr.advanced(by: currentWrite.bufferOffset), currentWrite.availableBytes())
       } while retval == -1 && errno == EINTR
       return retval
     }
@@ -567,26 +576,26 @@ public class SwiftDSSocket: NSObject {
       afterWriteAction = .error
       socketError = SocketError(.socketErrorWriteSpecific, socketErrorCode: Int(errno))
     }
-    
+
     if self.currentWrite == nil && self.writeQueue.isEmpty {
       if closeCondition == .afterWrites {
         closeWithError(error: socketError)
       }
-      
+
       if self.currentRead == nil && self.readQueue.isEmpty && closeCondition == .afterBoth {
         closeWithError(error: socketError)
       }
     }
-    
+
     if afterWriteAction == .waiting {
       resumeWriteDispatchSource()
     } else {
       closeWithError(error: socketError)
     }
-    
+
   }
-  
-  
+
+
   fileprivate func doReadData(nAvailable: Int) {
     var afterReadAction: SocketIOAfterAction = .waiting
     var socketError: SocketError? = nil
@@ -594,29 +603,29 @@ public class SwiftDSSocket: NSObject {
       suspendReadDispatchSource()
       return
     }
-    
+
     if currentRead == nil {
       currentRead = readQueue.front
     }
-    
+
     guard let currentRead = currentRead else {return}
-    
+
     // deal with read packet with specified data length
     if let buffer = currentRead.buffer, currentRead.bufferCapacity > 0 {
       assert(currentRead.buffer != nil)
       var nread = 0
       repeat{
         errno = 0
-        nread = Darwin.read(socketFD, buffer.advanced(by: currentRead.bufferOffset), currentRead.availabeSpace())
+        nread = sysRead(socketFD, buffer.advanced(by: currentRead.bufferOffset), currentRead.availabeSpace())
       } while nread == -1 && errno == EINTR
-      
+
       if nread > 0 {
         currentRead.bufferOffset += nread
       } else if nread == -1 && errno != EWOULDBLOCK {
         afterReadAction = .error
         socketError = SocketError(.socketErrorReadSpecific, socketErrorCode: Int(errno))
       }
-      
+
       if currentRead.spaceFull() {
         readQueue.removeTop()
         self.currentRead = nil
@@ -631,8 +640,8 @@ public class SwiftDSSocket: NSObject {
           self.delegate?.socket?(sock: self, didPartialRead: totalBytesRead, tag: theTag)
         }
       }
-      
-      
+
+
       if nread == 0 {
         afterReadAction = .eof
       }
@@ -642,9 +651,9 @@ public class SwiftDSSocket: NSObject {
       var nread = 0
       repeat{
         errno = 0
-        nread = Darwin.read(socketFD, buffer, nAvailable)
+        nread = sysRead(socketFD, buffer, nAvailable)
       } while nread == -1 && errno == EINTR
-      
+
       if nread > 0 {
         readQueue.removeTop()
         self.currentRead = nil
@@ -656,24 +665,24 @@ public class SwiftDSSocket: NSObject {
         afterReadAction = .error
         socketError = SocketError(.socketErrorReadSpecific, socketErrorCode: Int(errno))
       }
-      
+
       if nread == 0 {
         afterReadAction = .eof
       }
-      
+
     }
-    
+
     if self.currentRead == nil && self.readQueue.isEmpty {
       if closeCondition == .afterReads {
         closeWithError(error: socketError)
       }
-      
+
       if self.currentWrite == nil && self.writeQueue.isEmpty && closeCondition == .afterBoth {
         closeWithError(error: socketError)
       }
     }
-    
-    
+
+
     switch afterReadAction {
     case .eof:
       doReadEOF()
@@ -684,66 +693,67 @@ public class SwiftDSSocket: NSObject {
     case .error:
       closeWithError(error: socketError)
     }
-    
+
   }
-  
+
   fileprivate func closeWithError(error: SocketError?) {
     guard socketFD != SwiftDSSocket.NullSocket else { return }
     readQueue.removeAll()
     writeQueue.removeAll()
-    
+
     var socketFDRefCount = 2
-    
+
     let closeReadWriteHandler = DispatchWorkItem { [weak self] in
       guard let strongSelf = self else { return }
       socketFDRefCount -= 1
       if socketFDRefCount == 0 && strongSelf.socketFD != -1 {
-        close(strongSelf.socketFD)
+        sysClose(strongSelf.socketFD)
         strongSelf.socketFD = -1
         strongSelf.status = .closed
       }
     }
-    
+
     readDispatchSource?.setCancelHandler(handler: closeReadWriteHandler)
     writeDispatchSource?.setCancelHandler(handler: closeReadWriteHandler)
     acceptDispatchSource?.setCancelHandler { [weak self] in
       guard let strongSelf = self else { return }
       if strongSelf.socketFD != -1 {
-        close(strongSelf.socketFD)
+        sysClose(strongSelf.socketFD)
         strongSelf.status = .closed
         strongSelf.socketFD = -1
       }
     }
-    
+
     let sourcesToCancel: [Any?] = [readDispatchSource, writeDispatchSource, acceptDispatchSource].filter { $0 != nil }
     for source in sourcesToCancel {
       if let readSource = source as? DispatchSourceRead {
         readSource.cancel()
         self.resumeReadDispatchSource()
       }
-      
+
       if let writeSouce = source as? DispatchSourceWrite {
         writeSouce.cancel()
         self.resumeWriteDispatchSource()
       }
-      
+
       if let acceptSource = source as? DispatchSourceRead {
         acceptSource.cancel()
         self.resumeAcceptDispatchSource()
       }
-      
+
     }
-    
+
     if sourcesToCancel.isEmpty {
-      close(socketFD)
+      sysClose(socketFD)
+      socketFD = -1
       status = .closed
     }
-    
+
     delegateQueue?.async {
       self.delegate?.socket?(sock: self, didCloseConnection: error)
     }
   }
-  
+
   fileprivate func doReadEOF() {
     if let currentRead = currentRead, currentRead.isSpecifiedLength(), let buffer = currentRead.buffer {
       let data = Data(bytesNoCopy: buffer, count: currentRead.bufferOffset, deallocator: .free)
@@ -753,7 +763,7 @@ public class SwiftDSSocket: NSObject {
     }
     closeWithError(error: nil)
   }
-  
+
   fileprivate func setNonBlocking() {
     let flags = fcntl(socketFD, F_GETFL)
     if flags == -1 {
@@ -761,7 +771,7 @@ public class SwiftDSSocket: NSObject {
       assert(1 == 2)
       return
     }
-    
+
     let retval = fcntl(socketFD, F_SETFL, flags | O_NONBLOCK)
     if retval == -1 {
       status = .problematic
@@ -769,16 +779,16 @@ public class SwiftDSSocket: NSObject {
       return
     }
   }
-  
-  
+
+
   /// connect to a host using address:port
   ///
   /// - Parameters:
   ///   - host: host address could be IP(v4/v6) or domain name in `String`
   ///   - port: port number in UInt16
   /// - Throws: throws a SocketError
-  public func tryConnect(toHost host: String, port: UInt16) throws {
-    
+  public func connect(toHost host: String, port: UInt16) throws {
+
     try socketQueue.sync {
       guard status == .initial else { throw SocketError(.socketErrorIncorrectSocketStatus) }
       status = .connecting
@@ -792,15 +802,15 @@ public class SwiftDSSocket: NSObject {
         let portString = String(port)
         let gaiError = host.withCString({ (hostPtr) -> Int32 in
           return portString.withCString({ (portPtr) -> Int32 in
-            return getaddrinfo(hostPtr, portPtr, &addrInfo, &result)
+            return sysDNS(hostPtr, portPtr, &addrInfo, &result)
           })
         })
-        
+
         if gaiError != 0 {
           SwiftDSSocket.log("gai occurs error")
           return
         }
-        
+
         var addresses = [Data?]()
         var cursor = result
         while cursor != nil {
@@ -812,13 +822,13 @@ public class SwiftDSSocket: NSObject {
             cursor = addrInfo.ai_next
           }
         }
-        
+
         cursor = nil
-        
+
         for address in addresses {
           if let sockAddr = address?.withUnsafeBytes({$0.pointee as addrinfo}) {
-            let fd = socket(sockAddr.ai_family, sockAddr.ai_socktype, sockAddr.ai_protocol)
-            let retval = connect(fd, sockAddr.ai_addr, sockAddr.ai_addrlen)
+            let fd = sysSocket(sockAddr.ai_family, sockAddr.ai_socktype, sockAddr.ai_protocol)
+            let retval = sysConnect(fd, sockAddr.ai_addr, sockAddr.ai_addrlen)
             if retval != -1 {
               self.socketQueue.async { [weak self] in
                 guard let strongSelf = self else { return }
@@ -834,24 +844,24 @@ public class SwiftDSSocket: NSObject {
             } else {
               SwiftDSSocket.log("connect error code = \(retval)")
             }
-            
+
           }
-          
+
         }
-        
+
         freeaddrinfo(result)
-        
+
       }
     }
   }
-  
+
 
   /// connect to kernel extenstion by using bundleId (String)
   ///
   /// - Parameter bundleName: bundleName in `String`
   /// - Throws: throws a SocketError
   #if os(macOS)
-  public func tryConnect(tobundleName bundleName: String) throws {
+  public func connect(tobundleName bundleName: String) throws {
     try socketQueue.sync {
       var sockAddrControl = sockaddr_ctl()
       let ctlInfoSize = MemoryLayout<ctl_info>.stride
@@ -872,28 +882,27 @@ public class SwiftDSSocket: NSObject {
       sockAddrControl.ss_sysaddr = UInt16(SYSPROTO_CONTROL)
       sockAddrControl.sc_unit = 0
       sockAddrControl.sc_id = ctlInfo.ctl_id
-      SwiftDSSocket.log("Got ctl_id = " + String(ctlInfo.ctl_id))
       var sockaddrPtr = withUnsafePointer(to: &sockAddrControl, {
         return $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
           return $0.pointee as sockaddr
         }
       })
-      
-      let retval = Darwin.connect(socketFD, &sockaddrPtr, UInt32(MemoryLayout<sockaddr_ctl>.stride))
+
+      let retval = sysConnect(socketFD, &sockaddrPtr, UInt32(MemoryLayout<sockaddr_ctl>.stride))
       if retval != 0 {
         SwiftDSSocket.log("Cannot connect to kernel extension retval = " + String(retval))
         throw SocketError(.socketErrorDefault)
       }
-      
+
       status = .connecting
-      
+
       self.setupWatchersForNewConnectedSocket(peerHost: bundleName, peerPort: 0)
-      
+
     }
-    
+
   }
   #endif
-  
+
   /// write data to socket
   ///
   /// - Parameters:
@@ -908,17 +917,17 @@ public class SwiftDSSocket: NSObject {
       strongSelf.writeQueue.enqueue(packet)
       strongSelf.resumeWriteDispatchSource()
     }
-    
+
   }
-  
-  
+
+
   /// read data from socket without given data length
   ///
   /// - Parameter tag: a tag to mark this read operation
   public func readData(tag: Int) {
     readData(toLength: 0, tag: tag)
   }
-  
+
   /// read specified length of data from socket
   /// the callback will be invoked right after read specified amount of data
   /// - Parameters:
@@ -934,22 +943,22 @@ public class SwiftDSSocket: NSObject {
       strongSelf.resumeReadDispatchSource()
     }
   }
-  
+
   /// disconnect socket after all read opreations queued up and prevents new read operations
   public func disconnectAfterReading() {
     disconnect(afterCondition: .afterReads)
   }
-  
+
   /// disconnect socket after all write opreations queued up and prevents new write operations
   public func disconnectAfterWriting() {
     disconnect(afterCondition: .afterWrites)
   }
-  
+
   /// disconnect socket after all opreations queued up and prevents new operations
   public func disconnectAfterReadingAndWriting() {
     disconnect(afterCondition: .afterBoth)
   }
-  
+
   fileprivate func disconnect(afterCondition: CloseCondition) {
     socketQueue.async { [weak self] in
       guard let strongSelf = self else { return }
@@ -959,7 +968,7 @@ public class SwiftDSSocket: NSObject {
       }
     }
   }
-  
+
   /// simply disconnect socket and discards all opreations queued up
   public func disconnect() {
     socketQueue.async { [weak self] in
@@ -970,11 +979,11 @@ public class SwiftDSSocket: NSObject {
       }
     }
   }
-  
+
   deinit {
     if socketFD != -1 && status != .closed {
-      close(socketFD)
+      sysClose(socketFD)
     }
-    
+
   }
 }

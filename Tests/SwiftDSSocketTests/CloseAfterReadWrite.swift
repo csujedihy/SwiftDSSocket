@@ -40,7 +40,7 @@ class CloseAfterReadWrite: XCTestCase {
   
   func testExample() {
     try? server?.accept(onPort: serverPort)
-    try? client?.tryConnect(toHost: serverAdress, port: serverPort)
+    try? client?.connect(toHost: serverAdress, port: serverPort)
     closeAfterAll = expectation(description: "Closed After Read and Write")
     finishWrite = expectation(description: "Finished Read Correctly")
     
