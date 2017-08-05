@@ -138,9 +138,8 @@ class SwiftDSSocketReadPacket: NSObject {
   }
   
   init(capacity: Int, buffer: UnsafeMutablePointer<UInt8>, offset: Int, tag: Int = -1) {
-    self.buffer = buffer
+    self.buffer = buffer.advanced(by: offset)
     self.bufferCapacity = capacity
-    self.bufferOffset = offset
     self.readTag = tag
     self.deallocator = .none
   }
@@ -961,13 +960,32 @@ public class SwiftDSSocket: NSObject {
     socketQueue.async { [weak self] in
       guard let strongSelf = self else { return }
       guard strongSelf.status < .closing else { return }
-      assert(strongSelf.readDispatchSource != nil, "readDispatchSource is nil")
       let packet = SwiftDSSocketReadPacket(capacity: Int(toLength), tag: tag)
       strongSelf.readQueue.enqueue(packet)
       strongSelf.resumeReadDispatchSource()
     }
   }
 
+  
+  /// read specified length of data into buffer that starts from offset
+  ///
+  /// users should make sure that buffer will not overflow
+  ///
+  /// - Parameters:
+  ///   - toLength: length of data to read
+  ///   - buffer: buffer given by user
+  ///   - offset: offset of buffer
+  ///   - tag: a tag to mark this read operation
+  public func readData(toLength: UInt, buffer: UnsafeMutablePointer<UInt8>, offset: Int, tag: Int) {
+    socketQueue.async { [weak self] in
+      guard let strongSelf = self else { return }
+      guard strongSelf.status < .closing else { return }
+      let packet = SwiftDSSocketReadPacket(capacity: Int(toLength), buffer: buffer, offset: offset, tag: tag)
+      strongSelf.readQueue.enqueue(packet)
+      strongSelf.resumeReadDispatchSource()
+    }
+  }
+  
   /// disconnect socket after all read opreations queued up and prevents new read operations
   public func disconnectAfterReading() {
     disconnect(afterCondition: .afterReads)
