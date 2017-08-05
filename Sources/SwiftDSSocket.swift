@@ -137,9 +137,10 @@ class SwiftDSSocketReadPacket: NSObject {
     self.deallocator = .free
   }
   
-  init(capacity: Int, buffer: UnsafeMutablePointer<UInt8>, offset: UInt, tag: Int = -1) {
+  init(capacity: Int, buffer: UnsafeMutablePointer<UInt8>, offset: Int, tag: Int = -1) {
     self.buffer = buffer
     self.bufferCapacity = capacity
+    self.bufferOffset = offset
     self.readTag = tag
     self.deallocator = .none
   }
