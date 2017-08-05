@@ -24,6 +24,7 @@ let sysSetSockOpt = Darwin.setsockopt
 let sysGetSockOpt = Darwin.getsockopt
 let sysDNS = Darwin.getaddrinfo
 let sysClose = { _ = Darwin.close($0) }
+let sysMalloc = { return OpaquePointer(malloc($0))}
 
 
 /// delegate methods for each operation
@@ -125,13 +126,22 @@ class SwiftDSSocketReadPacket: NSObject {
   var bufferCapacity = 0
   var bufferOffset = 0
   var readTag = 0
+  var deallocator: Data.Deallocator = .none
 
   init(capacity: Int, tag: Int = -1) {
     if capacity > 0 {
-      self.buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: capacity)
+      self.buffer = UnsafeMutablePointer<UInt8>(sysMalloc(capacity))
     }
     self.bufferCapacity = capacity
     self.readTag = tag
+    self.deallocator = .free
+  }
+  
+  init(capacity: Int, buffer: UnsafeMutablePointer<UInt8>, offset: UInt, tag: Int = -1) {
+    self.buffer = buffer
+    self.bufferCapacity = capacity
+    self.readTag = tag
+    self.deallocator = .none
   }
 
   func isSpecifiedLength() -> Bool {
@@ -261,6 +271,7 @@ public class SwiftDSSocket: NSObject {
       case socketErrorReadSpecific
       case socketErrorWriteSpecific
       case socketErrorSetSockOpt
+      case socketErrorMallocFailure
     }
 
     /// specifies error kind
@@ -626,16 +637,17 @@ public class SwiftDSSocket: NSObject {
         socketError = SocketError(.socketErrorReadSpecific, socketErrorCode: Int(errno))
       }
 
+      let theTag = currentRead.readTag
+
       if currentRead.spaceFull() {
         readQueue.removeTop()
         self.currentRead = nil
-        let dataForUserRead = Data(bytesNoCopy: buffer, count: currentRead.bufferCapacity, deallocator: .custom(deallocateBufferBlock))
+        let dataForUserRead = Data(bytesNoCopy: buffer, count: currentRead.bufferCapacity, deallocator: currentRead.deallocator)
         delegateQueue?.async {
-          self.delegate?.socket?(sock: self, didRead: dataForUserRead, tag: currentRead.readTag)
+          self.delegate?.socket?(sock: self, didRead: dataForUserRead, tag: theTag)
         }
       } else if nread > 0 {
         let totalBytesRead = currentRead.bufferOffset
-        let theTag = currentRead.readTag
         delegateQueue?.async {
           self.delegate?.socket?(sock: self, didPartialRead: totalBytesRead, tag: theTag)
         }
@@ -647,7 +659,11 @@ public class SwiftDSSocket: NSObject {
       }
     } else {
       assert(currentRead.buffer == nil)
-      let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: nAvailable)
+      guard let buffer = UnsafeMutablePointer<UInt8>(sysMalloc(nAvailable)) else {
+        socketError = SocketError(.socketErrorMallocFailure)
+        closeWithError(error: socketError)
+        return
+      }
       var nread = 0
       repeat{
         errno = 0
@@ -657,9 +673,10 @@ public class SwiftDSSocket: NSObject {
       if nread > 0 {
         readQueue.removeTop()
         self.currentRead = nil
-        let dataForUserRead = Data(bytesNoCopy: buffer, count: nread, deallocator: .custom(deallocateBufferBlock))
+        let theTag = currentRead.readTag
+        let dataForUserRead = Data(bytesNoCopy: buffer, count: nread, deallocator: currentRead.deallocator)
         delegateQueue?.async {
-          self.delegate?.socket?(sock: self, didRead: dataForUserRead, tag: currentRead.readTag)
+          self.delegate?.socket?(sock: self, didRead: dataForUserRead, tag: theTag)
         }
       } else if nread == -1 && errno != EWOULDBLOCK {
         afterReadAction = .error
@@ -756,11 +773,9 @@ public class SwiftDSSocket: NSObject {
 
   fileprivate func doReadEOF() {
     if let currentRead = currentRead, currentRead.isSpecifiedLength(), let buffer = currentRead.buffer {
-      let bufferCapacity = currentRead.bufferCapacity
-      let data = Data(bytesNoCopy: buffer, count: currentRead.bufferOffset, deallocator: .custom({ (ptr, _) in
-        ptr.deallocate(bytes: bufferCapacity, alignedTo: 1)
-      }))
       let theTag = currentRead.readTag
+      self.currentRead = nil
+      let data = Data(bytesNoCopy: buffer, count: currentRead.bufferOffset, deallocator: currentRead.deallocator)
       delegateQueue?.async {
         self.delegate?.socket?(sock: self, didRead: data, tag: theTag)
       }
