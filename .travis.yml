@@ -2,9 +2,5 @@ language: objective-c
 os: osx
 osx_image: xcode8.3
 
-install:
-- gem install xcpretty --no-rdoc --no-ri --no-document --quiet
-- gem install xcpretty-travis-formatter --no-rdoc --no-ri --no-document --quiet
-
 script:
 - swift test
