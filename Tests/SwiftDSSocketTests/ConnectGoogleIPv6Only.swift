@@ -28,19 +28,20 @@ class ConnectGoogleIPv6Only: XCTestCase {
     super.tearDown()
     client?.disconnect()
   }
-  
-  func testExample() {
-    try? client?.connect(toHost: serverAdress, port: serverPort)
-    didConnect = expectation(description: "IPv4/6 Connect -> Good")
-    
-    waitForExpectations(timeout: 5) { (error: Error?) in
-      if let error = error {
-        XCTFail("failed for error: \(error.localizedDescription)")
-      } else {
-        SwiftDSSocket.log("Success")
-      }
-    }
-  }
+
+// Uncomment the code below if you have a IPv6 test environment
+//  func testExample() {
+//    try? client?.connect(toHost: serverAdress, port: serverPort)
+//    didConnect = expectation(description: "IPv4/6 Connect -> Good")
+//    
+//    waitForExpectations(timeout: 5) { (error: Error?) in
+//      if let error = error {
+//        XCTFail("failed for error: \(error.localizedDescription)")
+//      } else {
+//        SwiftDSSocket.log("Success")
+//      }
+//    }
+//  }
 }
 
 extension ConnectGoogleIPv6Only: SwiftDSSocketDelegate {
