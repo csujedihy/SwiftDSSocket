@@ -100,7 +100,7 @@
     },
     {
       "file": "/Users/jedihy/Documents/Project/SwiftDSSocket/Sources/SwiftDSSocket.swift",
-      "line": 885,
+      "line": 936,
       "symbol": "SwiftDSSocket.connect(tobundleName:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"

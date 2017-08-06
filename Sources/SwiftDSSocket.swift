@@ -202,6 +202,7 @@ public class SwiftDSSocket: NSObject {
   fileprivate var socketReady = false
   fileprivate var closeCondition: CloseCondition = .none
   fileprivate var status: SocketStatus = .initial
+  fileprivate var pendingConnectionRequest = 0
   fileprivate var readQueue = Queue<SwiftDSSocketReadPacket>()
   fileprivate var writeQueue = Queue<SwiftDSSocketWritePacket>()
   fileprivate var currentRead: SwiftDSSocketReadPacket?
@@ -210,8 +211,7 @@ public class SwiftDSSocket: NSObject {
   /// store user data that can be used for context
   public var userData: Any?
   /// debug option (might be deprecated in future)
-  public static var debugMode = false
-
+  public static var debugMode = true
 
   fileprivate enum SocketStatus: Int, Comparable {
     case initial = 0
@@ -277,13 +277,13 @@ public class SwiftDSSocket: NSObject {
     /// specifies error kind
     public var errorKind: ErrorKind?
     /// specifies error code (only for BSD socket standard error code)
-    public var socketErrorCode: Int?
+    public var socketErrorCode: Int32
     /// a description string for this error
     public var localizedDescription: String?
 
-    init(_ errorKind: ErrorKind, socketErrorCode: Int? = nil, errorDescription: String? = nil) {
+    init(_ errorKind: ErrorKind, socketErrorCode: Int = 0, errorDescription: String? = nil) {
       self.errorKind = errorKind
-      self.socketErrorCode = socketErrorCode
+      self.socketErrorCode = Int32(socketErrorCode)
       self.localizedDescription = errorDescription
     }
   }
@@ -714,7 +714,6 @@ public class SwiftDSSocket: NSObject {
   }
 
   fileprivate func closeWithError(error: SocketError?) {
-    guard socketFD != SwiftDSSocket.NullSocket else { return }
     readQueue.removeAll()
     writeQueue.removeAll()
 
@@ -761,8 +760,10 @@ public class SwiftDSSocket: NSObject {
     }
 
     if sourcesToCancel.isEmpty {
-      sysClose(socketFD)
-      socketFD = -1
+      if socketFD != -1 {
+        sysClose(socketFD)
+        socketFD = -1
+      }
       status = .closed
     }
 
@@ -809,13 +810,17 @@ public class SwiftDSSocket: NSObject {
   public func connect(toHost host: String, port: UInt16) throws {
 
     try socketQueue.sync {
-      guard status == .initial else { throw SocketError(.socketErrorIncorrectSocketStatus) }
+      guard status == .initial || status == .closed else { throw SocketError(.socketErrorIncorrectSocketStatus) }
       readQueue.removeAll()
       writeQueue.removeAll()
       status = .connecting
-      DispatchQueue.global(qos: .default).async {
+      DispatchQueue.global(qos: .default).async { [weak self] in
+        guard let strongSelf = self else { return }
         var addrInfo = addrinfo()
         var result: UnsafeMutablePointer<addrinfo>? = nil
+        defer {
+          freeaddrinfo(result)
+        }
         addrInfo.ai_family = PF_UNSPEC
         addrInfo.ai_socktype = SOCK_STREAM
         addrInfo.ai_protocol = IPPROTO_TCP
@@ -832,50 +837,96 @@ public class SwiftDSSocket: NSObject {
           return
         }
 
-        var addresses = [Data?]()
+        var addressV4: Data? = nil
+        var addressV6: Data? = nil
+        
         var cursor = result
+        var requestCount = 0
         while cursor != nil {
           if let addrInfo = cursor?.pointee {
-            if addrInfo.ai_family == AF_INET6 || addrInfo.ai_family == AF_INET {
-              let data = Data(bytes: cursor!, count: Int(MemoryLayout<addrinfo>.size))
-              addresses.append(data)
+            if addressV6 == nil || addressV4 == nil {
+              var addressData = Data(bytes: cursor!, count: Int(MemoryLayout<addrinfo>.size))
+              addressData.withUnsafeMutableBytes({ (ptr: UnsafeMutablePointer<addrinfo>) in
+                let copiedPtr = UnsafeMutablePointer<sockaddr>.allocate(capacity: MemoryLayout<sockaddr>.size)
+                copiedPtr.initialize(from: ptr.pointee.ai_addr, count: 1)
+                ptr.pointee.ai_addr = copiedPtr
+              })
+              
+              if addressV4 == nil && addrInfo.ai_family == AF_INET {
+                addressV4 = addressData
+                requestCount += 1
+              }
+              
+              if addressV6 == nil && addrInfo.ai_family == AF_INET6 {
+                addressV6 = addressData
+                requestCount += 1
+              }
+            } else {
+              break
             }
+
             cursor = addrInfo.ai_next
           }
         }
 
+        SwiftDSSocket.log("requestCount = \(requestCount)")
         cursor = nil
-
-        for address in addresses {
-          if let sockAddr = address?.withUnsafeBytes({$0.pointee as addrinfo}) {
-            let fd = sysSocket(sockAddr.ai_family, sockAddr.ai_socktype, sockAddr.ai_protocol)
-            let retval = sysConnect(fd, sockAddr.ai_addr, sockAddr.ai_addrlen)
-            if retval != -1 {
-              self.socketQueue.async { [weak self] in
-                guard let strongSelf = self else { return }
-                strongSelf.socketFD = fd
-                strongSelf.status = .connected
-                strongSelf.setNonBlocking()
-                strongSelf.setupWatchersForNewConnectedSocket(peerHost: host, peerPort: port)
-                strongSelf.delegateQueue?.async {
-                  strongSelf.delegate?.socket?(sock: strongSelf, didConnectToHost: host, port: port)
-                }
-              }
-              break
-            } else {
-              SwiftDSSocket.log("connect error code = \(retval)")
-            }
-
-          }
-
+        
+        strongSelf.socketQueue.async {
+          strongSelf.pendingConnectionRequest = requestCount
         }
-
-        freeaddrinfo(result)
+        
+        if let addressV4 = addressV4 {
+          strongSelf.socketQueue.asyncAfter(deadline: .now() + .milliseconds(20), execute: {
+            strongSelf.connectToSocketAddress(address: addressV4, host: host, port: port)
+          })
+        }
+        
+        
+        if let addressV6 = addressV6 {
+          strongSelf.connectToSocketAddress(address: addressV6, host: host, port: port)
+        }
 
       }
     }
   }
 
+  
+  fileprivate func connectToSocketAddress(address: Data, host: String, port: UInt16) {
+    let sockAddr = address.withUnsafeBytes({$0.pointee as addrinfo})
+    let fd = sysSocket(sockAddr.ai_family, sockAddr.ai_socktype, sockAddr.ai_protocol)
+    let retval = sysConnect(fd, sockAddr.ai_addr, sockAddr.ai_addrlen)
+    let socketErrorCode = errno
+    defer {
+      sockAddr.ai_addr.deallocate(capacity: MemoryLayout<sockaddr>.size)
+    }
+    if retval != -1 {
+      self.socketQueue.async { [weak self] in
+        guard let strongSelf = self else { return }
+        if strongSelf.status == .connecting {
+          strongSelf.socketFD = fd
+          strongSelf.status = .connected
+          strongSelf.setNonBlocking()
+          strongSelf.setupWatchersForNewConnectedSocket(peerHost: host, peerPort: port)
+          strongSelf.delegateQueue?.async {
+            strongSelf.delegate?.socket?(sock: strongSelf, didConnectToHost: host, port: port)
+          }
+        } else {
+          sysClose(fd)
+        }
+      }
+    } else {
+      sysClose(fd)
+      self.socketQueue.async { [weak self] in
+        guard let strongSelf = self else { return }
+        strongSelf.pendingConnectionRequest -= 1
+        if strongSelf.pendingConnectionRequest == 0 {
+          strongSelf.closeWithError(error: SocketError(.socketErrorConnecting, socketErrorCode: Int(socketErrorCode)))
+        }
+      }
+    }
+  }
+  
 
   /// connect to kernel extenstion by using bundleId (String)
   ///
