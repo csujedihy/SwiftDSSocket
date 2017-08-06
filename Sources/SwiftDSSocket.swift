@@ -25,7 +25,8 @@ let sysGetSockOpt = Darwin.getsockopt
 let sysDNS = Darwin.getaddrinfo
 let sysClose = { _ = Darwin.close($0) }
 let sysMalloc = { return OpaquePointer(malloc($0))}
-
+let sysMemCopy = { _ = memcpy($0, $1, $2) }
+let sysFree = { return free($0) }
 
 /// delegate methods for each operation
 @objc public protocol SwiftDSSocketDelegate {
@@ -200,6 +201,7 @@ public class SwiftDSSocket: NSObject {
   fileprivate var isAcceptDispatchSourceSuspended = true
   fileprivate var socketQueue = DispatchQueue(label: "io.proximac.socket.queue")
   fileprivate var socketReady = false
+  fileprivate var preferV4 = false
   fileprivate var closeCondition: CloseCondition = .none
   fileprivate var status: SocketStatus = .initial
   fileprivate var pendingConnectionRequest = 0
@@ -211,7 +213,7 @@ public class SwiftDSSocket: NSObject {
   /// store user data that can be used for context
   public var userData: Any?
   /// debug option (might be deprecated in future)
-  public static var debugMode = true
+  public static var debugMode = false
 
   fileprivate enum SocketStatus: Int, Comparable {
     case initial = 0
@@ -347,8 +349,12 @@ public class SwiftDSSocket: NSObject {
     exit(1)
   }
 
-  fileprivate func deallocateBufferBlock(ptr: UnsafeMutableRawPointer, capacity: Int) {
-    ptr.deallocate(bytes: capacity, alignedTo: 1)
+  
+  /// let SwiftDSSocket connect to IPv4 in priority
+  public func preferIPv4() {
+    socketQueue.sync {
+      preferV4 = true
+    }
   }
 
   fileprivate func suspendReadDispatchSource() {
@@ -847,8 +853,8 @@ public class SwiftDSSocket: NSObject {
             if addressV6 == nil || addressV4 == nil {
               var addressData = Data(bytes: cursor!, count: Int(MemoryLayout<addrinfo>.size))
               addressData.withUnsafeMutableBytes({ (ptr: UnsafeMutablePointer<addrinfo>) in
-                let copiedPtr = UnsafeMutablePointer<sockaddr>.allocate(capacity: MemoryLayout<sockaddr>.size)
-                copiedPtr.initialize(from: ptr.pointee.ai_addr, count: 1)
+                let copiedPtr = UnsafeMutablePointer<sockaddr>(sysMalloc(Int(addrInfo.ai_addrlen)))
+                sysMemCopy(copiedPtr, addrInfo.ai_addr, Int(addrInfo.ai_addrlen))
                 ptr.pointee.ai_addr = copiedPtr
               })
               
@@ -876,17 +882,25 @@ public class SwiftDSSocket: NSObject {
           strongSelf.pendingConnectionRequest = requestCount
         }
         
-        if let addressV4 = addressV4 {
-          strongSelf.socketQueue.asyncAfter(deadline: .now() + .milliseconds(20), execute: {
-            strongSelf.connectToSocketAddress(address: addressV4, host: host, port: port)
-          })
+        if addressV4 != nil && addressV6 != nil {
+          if !strongSelf.preferV4 {
+            swap(&addressV6, &addressV4)
+          }
+          
+          if let addressV4 = addressV4 {
+            DispatchQueue.global(qos: .default).asyncAfter(deadline: .now() + .milliseconds(20), execute: {
+              strongSelf.connectToSocketAddress(address: addressV4, host: host, port: port)
+            })
+          }
+          
+          if let addressV6 = addressV6 {
+            strongSelf.connectToSocketAddress(address: addressV6, host: host, port: port)
+          }
+        } else {
+          if let address = ([addressV4, addressV6].filter { $0 != nil })[0] {
+            strongSelf.connectToSocketAddress(address: address, host: host, port: port)
+          }
         }
-        
-        
-        if let addressV6 = addressV6 {
-          strongSelf.connectToSocketAddress(address: addressV6, host: host, port: port)
-        }
-
       }
     }
   }
@@ -895,10 +909,11 @@ public class SwiftDSSocket: NSObject {
   fileprivate func connectToSocketAddress(address: Data, host: String, port: UInt16) {
     let sockAddr = address.withUnsafeBytes({$0.pointee as addrinfo})
     let fd = sysSocket(sockAddr.ai_family, sockAddr.ai_socktype, sockAddr.ai_protocol)
+    SwiftDSSocket.log("Is IPv6: \(sockAddr.ai_family == AF_INET6)")
     let retval = sysConnect(fd, sockAddr.ai_addr, sockAddr.ai_addrlen)
     let socketErrorCode = errno
     defer {
-      sockAddr.ai_addr.deallocate(capacity: MemoryLayout<sockaddr>.size)
+      sysFree(sockAddr.ai_addr)
     }
     if retval != -1 {
       self.socketQueue.async { [weak self] in
@@ -946,7 +961,7 @@ public class SwiftDSSocket: NSObject {
       }
       ctlInfoPtr.initialize(to: 0, count: ctlInfoSize)
       let bundleNamePtr = ctlInfoPtr.advanced(by: 4)
-      _ = bundleName.withCString { memcpy(bundleNamePtr, $0, bundleName.characters.count) }
+      _ = bundleName.withCString { sysMemCopy(bundleNamePtr, $0, bundleName.characters.count) }
       if ioctl(socketFD, CTLIOCGINFO, ctlInfoPtr) == CInt(-1) {
         SwiftDSSocket.log("Cannot talk to kernel extension")
         throw SocketError(.socketErrorIOCTL)

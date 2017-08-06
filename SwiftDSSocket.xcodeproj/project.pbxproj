@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C12EDDCB1F37C1300020EF7B /* IPv4and6Connect.swift in Sources */ = {isa = PBXBuildFile; fileRef = C12EDDCA1F37C1300020EF7B /* IPv4and6Connect.swift */; };
+		C12EDDCD1F37DAD30020EF7B /* ConnectGoogleIPv6Only.swift in Sources */ = {isa = PBXBuildFile; fileRef = C12EDDCC1F37DAD30020EF7B /* ConnectGoogleIPv6Only.swift */; };
 		C19DA7111F32F8FF009A9581 /* PartialReadAndWrite.swift in Sources */ = {isa = PBXBuildFile; fileRef = C19DA7101F32F8FF009A9581 /* PartialReadAndWrite.swift */; };
 		C19DA7171F35AD7D009A9581 /* TransferSpeciedDataWithGivenBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C19DA7161F35AD7D009A9581 /* TransferSpeciedDataWithGivenBuffer.swift */; };
 		C19DA71B1F366FCD009A9581 /* ConnectToWhenPortOff.swift in Sources */ = {isa = PBXBuildFile; fileRef = C19DA71A1F366FCD009A9581 /* ConnectToWhenPortOff.swift */; };
@@ -30,6 +32,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C12EDDCA1F37C1300020EF7B /* IPv4and6Connect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IPv4and6Connect.swift; sourceTree = "<group>"; };
+		C12EDDCC1F37DAD30020EF7B /* ConnectGoogleIPv6Only.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectGoogleIPv6Only.swift; sourceTree = "<group>"; };
 		C19DA7101F32F8FF009A9581 /* PartialReadAndWrite.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PartialReadAndWrite.swift; sourceTree = "<group>"; };
 		C19DA7121F331802009A9581 /* SwiftDSSocket.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SwiftDSSocket.podspec; sourceTree = "<group>"; };
 		C19DA7131F331C31009A9581 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -76,6 +80,8 @@
 				C19DA7101F32F8FF009A9581 /* PartialReadAndWrite.swift */,
 				C19DA7161F35AD7D009A9581 /* TransferSpeciedDataWithGivenBuffer.swift */,
 				OBJ_11 /* CloseAfterReadWrite.swift */,
+				C12EDDCA1F37C1300020EF7B /* IPv4and6Connect.swift */,
+				C12EDDCC1F37DAD30020EF7B /* ConnectGoogleIPv6Only.swift */,
 			);
 			name = SwiftDSSocketTests;
 			path = Tests/SwiftDSSocketTests;
@@ -197,6 +203,8 @@
 				OBJ_34 /* CloseAfterReadWrite.swift in Sources */,
 				OBJ_35 /* ConnectAndListen.swift in Sources */,
 				OBJ_36 /* KernelCommunication.swift in Sources */,
+				C12EDDCD1F37DAD30020EF7B /* ConnectGoogleIPv6Only.swift in Sources */,
+				C12EDDCB1F37C1300020EF7B /* IPv4and6Connect.swift in Sources */,
 				C19DA71B1F366FCD009A9581 /* ConnectToWhenPortOff.swift in Sources */,
 				C19DA7111F32F8FF009A9581 /* PartialReadAndWrite.swift in Sources */,
 				OBJ_37 /* TransferSpecifiedData.swift in Sources */,
