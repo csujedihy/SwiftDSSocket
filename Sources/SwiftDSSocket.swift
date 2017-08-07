@@ -470,10 +470,11 @@ public class SwiftDSSocket: NSObject {
             errno = 0
             ret = sysBind(socketFD, $0, socklen_t(MemoryLayout<sockaddr_in6>.size))
           } while ret == -1 && errno == EINTR
+          SwiftDSSocket.log("bind retval = \(ret)")
           return ret != -1
         }
       }) else {
-        SwiftDSSocket.log("binding failed")
+        SwiftDSSocket.log("binding failed errno = \(errno)")
         sysClose(socketFD)
         socketFD = -1
         throw SocketError(.socketErrorConnecting)
