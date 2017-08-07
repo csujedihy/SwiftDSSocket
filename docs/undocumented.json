@@ -52,55 +52,62 @@
     {
       "file": "/Users/jedihy/Documents/Project/SwiftDSSocket/Sources/SwiftDSSocket.swift",
       "line": 273,
-      "symbol": "SwiftDSSocket.SocketError.ErrorKind.socketErrorReadSpecific",
+      "symbol": "SwiftDSSocket.SocketError.ErrorKind.socketErrorListening",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jedihy/Documents/Project/SwiftDSSocket/Sources/SwiftDSSocket.swift",
       "line": 274,
-      "symbol": "SwiftDSSocket.SocketError.ErrorKind.socketErrorWriteSpecific",
+      "symbol": "SwiftDSSocket.SocketError.ErrorKind.socketErrorReadSpecific",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jedihy/Documents/Project/SwiftDSSocket/Sources/SwiftDSSocket.swift",
       "line": 275,
-      "symbol": "SwiftDSSocket.SocketError.ErrorKind.socketErrorSetSockOpt",
+      "symbol": "SwiftDSSocket.SocketError.ErrorKind.socketErrorWriteSpecific",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jedihy/Documents/Project/SwiftDSSocket/Sources/SwiftDSSocket.swift",
       "line": 276,
+      "symbol": "SwiftDSSocket.SocketError.ErrorKind.socketErrorSetSockOpt",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jedihy/Documents/Project/SwiftDSSocket/Sources/SwiftDSSocket.swift",
+      "line": 277,
       "symbol": "SwiftDSSocket.SocketError.ErrorKind.socketErrorMallocFailure",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jedihy/Documents/Project/SwiftDSSocket/Sources/SwiftDSSocket.swift",
-      "line": 298,
+      "line": 299,
       "symbol": "SwiftDSSocket.SocketType.tcp",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jedihy/Documents/Project/SwiftDSSocket/Sources/SwiftDSSocket.swift",
-      "line": 300,
+      "line": 301,
       "symbol": "SwiftDSSocket.SocketType.kernel",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jedihy/Documents/Project/SwiftDSSocket/Sources/SwiftDSSocket.swift",
-      "line": 300,
+      "line": 301,
       "symbol": "SwiftDSSocket.SocketType.kernel",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jedihy/Documents/Project/SwiftDSSocket/Sources/SwiftDSSocket.swift",
-      "line": 951,
+      "line": 954,
       "symbol": "SwiftDSSocket.connect(tobundleName:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
