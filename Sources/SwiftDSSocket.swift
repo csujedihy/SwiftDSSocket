@@ -270,6 +270,7 @@ public class SwiftDSSocket: NSObject {
       case socketErrorAlreadyConnected
       case socketErrorIncorrectSocketStatus
       case socketErrorConnecting
+      case socketErrorListening
       case socketErrorReadSpecific
       case socketErrorWriteSpecific
       case socketErrorSetSockOpt
@@ -458,6 +459,7 @@ public class SwiftDSSocket: NSObject {
 
       var reuse: Int32 = 1
       if sysSetSockOpt(socketFD, SOL_SOCKET, SO_REUSEADDR, &reuse, socklen_t(MemoryLayout<Int32>.size)) != 0 {
+        SwiftDSSocket.log("sysSetSockOpt failed errno = \(errno)")
         throw SocketError(.socketErrorSetSockOpt, socketErrorCode: Int(errno))
       }
 
@@ -478,10 +480,10 @@ public class SwiftDSSocket: NSObject {
       }
 
       guard 1 != sysListen(socketFD, 1024) else {
-        SwiftDSSocket.log("listen() failed")
+        SwiftDSSocket.log("listen() failed errno = \(errno)")
         sysClose(socketFD)
         socketFD = -1
-        return
+        throw SocketError(.socketErrorListening, socketErrorCode: Int(errno))
       }
 
       status = .listening
@@ -931,6 +933,7 @@ public class SwiftDSSocket: NSObject {
         }
       }
     } else {
+      SwiftDSSocket.log("connect error errno = \(socketErrorCode)")
       sysClose(fd)
       self.socketQueue.async { [weak self] in
         guard let strongSelf = self else { return }
