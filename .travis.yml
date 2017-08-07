@@ -3,4 +3,4 @@ os: osx
 osx_image: xcode8.3
 
 script:
-- swift test | xcpretty -f `xcpretty-travis-formatter`
+- swift test
