@@ -20,6 +20,7 @@ class ConnectAndListen: XCTestCase {
   
   override func setUp() {
     super.setUp()
+    SwiftDSSocket.debugMode = true
     client = SwiftDSSocket(delegate: self, delegateQueue: .main, type: .tcp)
     server = SwiftDSSocket(delegate: self, delegateQueue: .main, type: .tcp)
   }
