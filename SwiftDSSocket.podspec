@@ -3,7 +3,7 @@ Pod::Spec.new do |s|
   s.version      = "0.1.1"
   s.summary      = "DispatchSource based sockets framework written in pure Swift 3.1"
   s.homepage     = "https://github.com/csujedihy/SwiftDSSocket"
-  s.license      = "GPL"
+  s.license      = "MIT"
   s.author             = { "jedihy" => "csujedi@gmail.com" }
   s.social_media_url   = "https://github.com/csujedihy"
   s.ios.deployment_target = "9.0"
