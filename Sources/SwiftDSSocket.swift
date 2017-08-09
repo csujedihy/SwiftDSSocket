@@ -191,7 +191,6 @@ public class SwiftDSSocket: NSObject {
   fileprivate let CTLIOCGINFO: CUnsignedLong = 0xc0644e03
   fileprivate weak var delegate: SwiftDSSocketDelegate?
   fileprivate weak var delegateQueue: DispatchQueue?
-  fileprivate var shouldRead = false
   fileprivate var socketType: SocketType = .tcp
   fileprivate var acceptDispatchSource: DispatchSourceRead?
   fileprivate var readDispatchSource: DispatchSourceRead?
@@ -200,7 +199,6 @@ public class SwiftDSSocket: NSObject {
   fileprivate var isWriteDispatchSourceSuspended = true
   fileprivate var isAcceptDispatchSourceSuspended = true
   fileprivate var socketQueue = DispatchQueue(label: "io.proximac.socket.queue")
-  fileprivate var socketReady = false
   fileprivate var preferV4 = false
   fileprivate var closeCondition: CloseCondition = .none
   fileprivate var status: SocketStatus = .initial
@@ -776,6 +774,11 @@ public class SwiftDSSocket: NSObject {
       status = .closed
     }
 
+    // clear up all flags
+    self.closeCondition = .none
+    self.currentRead = nil
+    self.currentWrite = nil
+    
     delegateQueue?.async {
       self.delegate?.socket?(sock: self, didCloseConnection: error)
     }
@@ -819,7 +822,7 @@ public class SwiftDSSocket: NSObject {
   public func connect(toHost host: String, port: UInt16) throws {
 
     try socketQueue.sync {
-      guard status == .initial || status == .closed else { throw SocketError(.socketErrorIncorrectSocketStatus) }
+      guard socketType == .tcp && (status == .initial || status == .closed) else { throw SocketError(.socketErrorIncorrectSocketStatus) }
       readQueue.removeAll()
       writeQueue.removeAll()
       status = .connecting
@@ -954,6 +957,7 @@ public class SwiftDSSocket: NSObject {
   #if os(macOS)
   public func connect(tobundleName bundleName: String) throws {
     try socketQueue.sync {
+      guard socketType == .kernel && (status == .initial || status == .closed) else { throw SocketError(.socketErrorIncorrectSocketStatus) }
       readQueue.removeAll()
       writeQueue.removeAll()
       var sockAddrControl = sockaddr_ctl()
