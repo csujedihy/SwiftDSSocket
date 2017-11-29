@@ -207,6 +207,7 @@ public class SwiftDSSocket: NSObject {
   fileprivate var writeQueue = Queue<SwiftDSSocketWritePacket>()
   fileprivate var currentRead: SwiftDSSocketReadPacket?
   fileprivate var currentWrite: SwiftDSSocketWritePacket?
+  fileprivate var disconnectGroup = DispatchGroup()
 
   /// store user data that can be used for context
   public var userData: Any?
@@ -1087,19 +1088,19 @@ public class SwiftDSSocket: NSObject {
 
   /// simply disconnect socket and discards all opreations queued up
   public func disconnect() {
-    socketQueue.async { [weak self] in
-      guard let strongSelf = self else { return }
-      if strongSelf.status >= .connected && strongSelf.status < .closing || strongSelf.status == .listening {
-        strongSelf.status = .closing
-        strongSelf.closeWithError(error: nil)
+    socketQueue.async(group: disconnectGroup) {
+      if self.status >= .connected && self.status < .closing || self.status == .listening {
+        self.status = .closing
+        self.closeWithError(error: nil)
       }
     }
   }
 
   deinit {
+    let _ = disconnectGroup.wait()
+    
     if socketFD != -1 && status != .closed {
       sysClose(socketFD)
     }
-
   }
 }
