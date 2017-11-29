@@ -1077,10 +1077,11 @@ public class SwiftDSSocket: NSObject {
   }
 
   fileprivate func disconnect(afterCondition: CloseCondition) {
-    socketQueue.async(group: disconnectGroup) {
-      if self.status >= .connected && self.status < .closing {
-        self.status = .closing
-        self.closeCondition = afterCondition
+    socketQueue.async { [weak self] in
+      guard let strongSelf = self else { return }
+      if strongSelf.status >= .connected && strongSelf.status < .closing {
+        strongSelf.status = .closing
+        strongSelf.closeCondition = afterCondition
       }
     }
   }
