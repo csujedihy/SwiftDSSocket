@@ -10,7 +10,7 @@
 
 ## Overview
 
-SwiftDSSocket is a purely swift based **asynchronous** socket framework built atop DispatchSource. Function signatures are pretty much similar to those in CocoaAsyncSocket because I implemented this framework by learning the source code of CocoaAsyncSocket. The initial idea to build this farmework is driven by the need of network library to communicate with KEXT (NKE) to re-write my [Proximac](https://github.com/csujedihy/proximac) project but none of frameworks I found in github supports that. Thus, I decided to implemented my own framework to do so.
+SwiftDSSocket is a purely swift based **asynchronous** socket framework built atop DispatchSource. Function signatures are pretty much similar to those in CocoaAsyncSocket because I implemented this framework by learning the source code of CocoaAsyncSocket. The initial idea to build this framework is driven by the need of network library to communicate with KEXT (NKE) to re-write my [Proximac](https://github.com/csujedihy/proximac) project but none of frameworks I found in github supports that. Thus, I decided to implemented my own framework to do so.
 
 **Note:** This framework is still under active development. It only passes my unit tests and might have various bugs.
 
